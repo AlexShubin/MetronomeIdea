@@ -1,4 +1,4 @@
-# MetronomeIdea
+# Metronome Idea
 IOS Metronome Idea based on AVAudioEngine (Swift)
 
 An Idea of how to make an accurate metronome on Swift using AVAudioEngine
