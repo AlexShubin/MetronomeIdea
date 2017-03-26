@@ -28,16 +28,16 @@ class Metronome {
         
     }
     
-    func generateBuffer(bpm: Int) -> AVAudioPCMBuffer {
+    func generateBuffer(bpm: Double) -> AVAudioPCMBuffer {
         audioFile.framePosition = 0
-        let periodLength = AVAudioFrameCount(audioFile.processingFormat.sampleRate * 60 / Double(bpm))
+        let periodLength = AVAudioFrameCount(audioFile.processingFormat.sampleRate * 60 / bpm)
         let buffer = AVAudioPCMBuffer(pcmFormat: audioFile.processingFormat, frameCapacity: periodLength)
         try! audioFile.read(into: buffer)
         buffer.frameLength = periodLength
         return buffer
     }
     
-    func play(bpm: Int) {
+    func play(bpm: Double) {
         
         let buffer = generateBuffer(bpm: bpm)
         

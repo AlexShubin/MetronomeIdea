@@ -10,23 +10,21 @@ class ViewController: UIViewController {
         let fileUrl = Bundle.main.url(forResource: "Click", withExtension: "wav")!
         return Metronome(fileURL: fileUrl)
     }()
-    var tempo: Int = 0 { didSet {
+    var tempo: Double = 0 { didSet {
             tempoLabel.text = String(self.tempo)
         }
     }
     
     override func viewDidLoad() {
-        
         tempo = 120
-        
         stepperSetup()
     }
     
     func stepperSetup() {
-        stepper.stepValue = 1
+        stepper.stepValue = 0.01
         stepper.minimumValue = 40
         stepper.maximumValue = 200
-        stepper.value = Double(tempo)
+        stepper.value = tempo
     }
     
     @IBAction func StartPlayback(_ sender: Any) {
@@ -38,7 +36,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func stepperValueChanged(_ sender: Any) {
-        tempo = Int(stepper.value)
+        tempo = stepper.value
         metronome.play(bpm: tempo)
     }
 

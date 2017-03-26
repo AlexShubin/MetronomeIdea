@@ -58,16 +58,24 @@
 		FAB0AC491DD2409D00824E47 /* PlaybackTest */ = {
 			isa = PBXGroup;
 			children = (
-				FAB0AC4A1DD2409D00824E47 /* AppDelegate.swift */,
+				FAC36E331E880D9C0097B9ED /* Supporting Files */,
 				FAB0AC4C1DD2409D00824E47 /* ViewController.swift */,
 				FAC36E311E8809BA0097B9ED /* Metronome.swift */,
 				FAB0AC4E1DD2409D00824E47 /* Main.storyboard */,
 				FA0C08B41DD6466000E8713F /* Click.wav */,
+			);
+			path = PlaybackTest;
+			sourceTree = "<group>";
+		};
+		FAC36E331E880D9C0097B9ED /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FAB0AC4A1DD2409D00824E47 /* AppDelegate.swift */,
 				FAB0AC511DD2409D00824E47 /* Assets.xcassets */,
 				FAB0AC531DD2409D00824E47 /* LaunchScreen.storyboard */,
 				FAB0AC561DD2409D00824E47 /* Info.plist */,
 			);
-			path = PlaybackTest;
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
