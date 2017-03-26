@@ -7,17 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FA0C08B51DD6466000E8713F /* Click.wav in Resources */ = {isa = PBXBuildFile; fileRef = FA0C08B41DD6466000E8713F /* Click.wav */; };
 		FAB0AC4B1DD2409D00824E47 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB0AC4A1DD2409D00824E47 /* AppDelegate.swift */; };
 		FAB0AC4D1DD2409D00824E47 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB0AC4C1DD2409D00824E47 /* ViewController.swift */; };
 		FAB0AC501DD2409D00824E47 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAB0AC4E1DD2409D00824E47 /* Main.storyboard */; };
 		FAB0AC521DD2409D00824E47 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAB0AC511DD2409D00824E47 /* Assets.xcassets */; };
 		FAB0AC551DD2409D00824E47 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAB0AC531DD2409D00824E47 /* LaunchScreen.storyboard */; };
 		FAC36E321E8809BA0097B9ED /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC36E311E8809BA0097B9ED /* Metronome.swift */; };
+		FAC36E361E8826700097B9ED /* High.wav in Resources */ = {isa = PBXBuildFile; fileRef = FAC36E341E8826700097B9ED /* High.wav */; };
+		FAC36E371E8826700097B9ED /* Low.wav in Resources */ = {isa = PBXBuildFile; fileRef = FAC36E351E8826700097B9ED /* Low.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		FA0C08B41DD6466000E8713F /* Click.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Click.wav; sourceTree = "<group>"; };
 		FAB0AC471DD2409D00824E47 /* MetronomeIdeaOnAVAudioEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetronomeIdeaOnAVAudioEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAB0AC4A1DD2409D00824E47 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FAB0AC4C1DD2409D00824E47 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -26,6 +26,8 @@
 		FAB0AC541DD2409D00824E47 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FAB0AC561DD2409D00824E47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAC36E311E8809BA0097B9ED /* Metronome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
+		FAC36E341E8826700097B9ED /* High.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = High.wav; sourceTree = "<group>"; };
+		FAC36E351E8826700097B9ED /* Low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Low.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +44,7 @@
 		FAB0AC3E1DD2409C00824E47 = {
 			isa = PBXGroup;
 			children = (
-				FAB0AC491DD2409D00824E47 /* PlaybackTest */,
+				FAB0AC491DD2409D00824E47 /* MetronomeIdea */,
 				FAB0AC481DD2409D00824E47 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -55,15 +57,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		FAB0AC491DD2409D00824E47 /* PlaybackTest */ = {
+		FAB0AC491DD2409D00824E47 /* MetronomeIdea */ = {
 			isa = PBXGroup;
 			children = (
 				FAC36E331E880D9C0097B9ED /* Supporting Files */,
 				FAB0AC4C1DD2409D00824E47 /* ViewController.swift */,
 				FAC36E311E8809BA0097B9ED /* Metronome.swift */,
 				FAB0AC4E1DD2409D00824E47 /* Main.storyboard */,
-				FA0C08B41DD6466000E8713F /* Click.wav */,
+				FAC36E341E8826700097B9ED /* High.wav */,
+				FAC36E351E8826700097B9ED /* Low.wav */,
 			);
+			name = MetronomeIdea;
 			path = PlaybackTest;
 			sourceTree = "<group>";
 		};
@@ -139,9 +143,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAB0AC551DD2409D00824E47 /* LaunchScreen.storyboard in Resources */,
+				FAC36E361E8826700097B9ED /* High.wav in Resources */,
 				FAB0AC521DD2409D00824E47 /* Assets.xcassets in Resources */,
+				FAC36E371E8826700097B9ED /* Low.wav in Resources */,
 				FAB0AC501DD2409D00824E47 /* Main.storyboard in Resources */,
-				FA0C08B51DD6466000E8713F /* Click.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

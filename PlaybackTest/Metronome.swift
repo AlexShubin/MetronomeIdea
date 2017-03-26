@@ -11,30 +11,64 @@ import AVFoundation
 class Metronome {
     
     var audioPlayerNode:AVAudioPlayerNode
-    var audioFile:AVAudioFile
+    var audioFileMainClick:AVAudioFile
+    var audioFileAccentedClick:AVAudioFile
     var audioEngine:AVAudioEngine
     
-    init (fileURL: URL) {
+    init (mainClickFile: URL, accentedClickFile: URL? = nil) {
         
-        audioFile = try! AVAudioFile(forReading: fileURL)
+        audioFileMainClick = try! AVAudioFile(forReading: mainClickFile)
+        audioFileAccentedClick = try! AVAudioFile(forReading: accentedClickFile ?? mainClickFile)
         
         audioPlayerNode = AVAudioPlayerNode()
         
         audioEngine = AVAudioEngine()
         audioEngine.attach(self.audioPlayerNode)
         
-        audioEngine.connect(audioPlayerNode, to: audioEngine.mainMixerNode, format: audioFile.processingFormat)
+        audioEngine.connect(audioPlayerNode, to: audioEngine.mainMixerNode, format: audioFileMainClick.processingFormat)
         try! audioEngine.start()
-        
     }
     
     func generateBuffer(bpm: Double) -> AVAudioPCMBuffer {
-        audioFile.framePosition = 0
-        let periodLength = AVAudioFrameCount(audioFile.processingFormat.sampleRate * 60 / bpm)
-        let buffer = AVAudioPCMBuffer(pcmFormat: audioFile.processingFormat, frameCapacity: periodLength)
-        try! audioFile.read(into: buffer)
-        buffer.frameLength = periodLength
-        return buffer
+        
+        audioFileMainClick.framePosition = 0
+        audioFileAccentedClick.framePosition = 0
+        
+        let beatLength = AVAudioFrameCount(audioFileMainClick.processingFormat.sampleRate * 60 / bpm)
+        
+        let bufferMainClick = AVAudioPCMBuffer(pcmFormat: audioFileMainClick.processingFormat, frameCapacity: beatLength)
+        try! audioFileMainClick.read(into: bufferMainClick)
+        bufferMainClick.frameLength = beatLength
+        
+        let bufferAccentedClick = AVAudioPCMBuffer(pcmFormat: audioFileMainClick.processingFormat, frameCapacity: beatLength)
+        try! audioFileAccentedClick.read(into: bufferAccentedClick)
+        bufferAccentedClick.frameLength = beatLength
+        
+        let bufferBar = AVAudioPCMBuffer(pcmFormat: audioFileMainClick.processingFormat, frameCapacity: 4 * beatLength)
+        bufferBar.frameLength = 4 * beatLength
+        
+        // don't forget if we have two or more channels then we have to multiply memory pointee at channels count
+        let accentedClickArray = Array(
+            UnsafeBufferPointer(start: bufferAccentedClick.floatChannelData?[0],
+                                count:Int(audioFileMainClick.processingFormat.channelCount) * Int(beatLength))
+        )
+        let mainClickArray = Array(
+            UnsafeBufferPointer(start: bufferMainClick.floatChannelData?[0],
+                                count:Int(audioFileMainClick.processingFormat.channelCount) * Int(beatLength))
+        )
+        
+        var barArray = Array<Float>()
+        // one time for first beat
+        barArray.append(contentsOf: accentedClickArray)
+        // three times for regular clicks
+        for _ in 1...3 {
+            barArray.append(contentsOf: mainClickArray)
+        }
+        
+        bufferBar.floatChannelData?.pointee.assign(from: barArray,
+                                                   count: Int(audioFileMainClick.processingFormat.channelCount) * Int(bufferBar.frameLength))
+        
+        return bufferBar
     }
     
     func play(bpm: Double) {
@@ -42,13 +76,9 @@ class Metronome {
         let buffer = generateBuffer(bpm: bpm)
         
         if audioPlayerNode.isPlaying {
-            
             audioPlayerNode.scheduleBuffer(buffer, at: nil, options: .interruptsAtLoop, completionHandler: nil)
-            
         } else {
-            
             self.audioPlayerNode.play()
-            
         }
         
         self.audioPlayerNode.scheduleBuffer(buffer, at: nil, options: .loops, completionHandler: nil)
@@ -56,9 +86,7 @@ class Metronome {
     }
     
     func stop() {
-        
         audioPlayerNode.stop()
-        
     }
     
 }

@@ -7,10 +7,11 @@ class ViewController: UIViewController {
     @IBOutlet weak var tempoLabel: UILabel!
     
     var metronome: Metronome = {
-        let fileUrl = Bundle.main.url(forResource: "Click", withExtension: "wav")!
-        return Metronome(fileURL: fileUrl)
+        let highUrl = Bundle.main.url(forResource: "High", withExtension: "wav")!
+        let lowUrl = Bundle.main.url(forResource: "Low", withExtension: "wav")!
+        return Metronome(mainClickFile: lowUrl, accentedClickFile: highUrl)
     }()
-    var tempo: Double = 0 { didSet {
+    var tempo: Int = 0 { didSet {
             tempoLabel.text = String(self.tempo)
         }
     }
@@ -21,14 +22,14 @@ class ViewController: UIViewController {
     }
     
     func stepperSetup() {
-        stepper.stepValue = 0.01
+        stepper.stepValue = 1
         stepper.minimumValue = 40
         stepper.maximumValue = 200
-        stepper.value = tempo
+        stepper.value = Double(tempo)
     }
     
     @IBAction func StartPlayback(_ sender: Any) {
-        metronome.play(bpm: tempo)
+        metronome.play(bpm: Double(tempo))
     }
     
     @IBAction func StopPlayback(_ sender: Any) {
@@ -36,8 +37,8 @@ class ViewController: UIViewController {
     }
     
     @IBAction func stepperValueChanged(_ sender: Any) {
-        tempo = stepper.value
-        metronome.play(bpm: tempo)
+        tempo = Int(stepper.value)
+        metronome.play(bpm: Double(tempo))
     }
 
 }
