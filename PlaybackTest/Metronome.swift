@@ -10,10 +10,10 @@ import AVFoundation
 
 class Metronome {
     
-    var audioPlayerNode:AVAudioPlayerNode
-    var audioFileMainClick:AVAudioFile
-    var audioFileAccentedClick:AVAudioFile
-    var audioEngine:AVAudioEngine
+    private var audioPlayerNode:AVAudioPlayerNode
+    private var audioFileMainClick:AVAudioFile
+    private var audioFileAccentedClick:AVAudioFile
+    private var audioEngine:AVAudioEngine
     
     init (mainClickFile: URL, accentedClickFile: URL? = nil) {
         
@@ -29,7 +29,7 @@ class Metronome {
         try! audioEngine.start()
     }
     
-    func generateBuffer(bpm: Double) -> AVAudioPCMBuffer {
+    private func generateBuffer(bpm: Double) -> AVAudioPCMBuffer {
         
         audioFileMainClick.framePosition = 0
         audioFileAccentedClick.framePosition = 0
