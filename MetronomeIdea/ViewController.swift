@@ -1,3 +1,10 @@
+//
+//  Metronome.swift
+//  MetronomeIdea
+//
+//  Created by Alex Shubin on 26.03.17.
+//  Copyright © 2017 Alex Shubin. All rights reserved.
+//
 
 import UIKit
 
@@ -11,17 +18,16 @@ class ViewController: UIViewController {
         let lowUrl = Bundle.main.url(forResource: "Low", withExtension: "wav")!
         return Metronome(mainClickFile: lowUrl, accentedClickFile: highUrl)
     }()
-    var tempo: Int = 0 { didSet {
+    var tempo = 0 {
+        didSet {
             tempoLabel.text = String(self.tempo)
         }
     }
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         tempo = 120
-        stepperSetup()
-    }
-    
-    func stepperSetup() {
+        // stepper setup
         stepper.stepValue = 1
         stepper.minimumValue = 40
         stepper.maximumValue = 200
@@ -40,6 +46,5 @@ class ViewController: UIViewController {
         tempo = Int(stepper.value)
         metronome.play(bpm: Double(tempo))
     }
-
 }
 
