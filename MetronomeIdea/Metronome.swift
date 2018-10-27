@@ -89,5 +89,8 @@ class Metronome {
     func stop() {
         audioPlayerNode.stop()
     }
-    
+
+    var isPlaying: Bool {
+        return audioPlayerNode.isPlaying
+    }
 }

@@ -44,7 +44,9 @@ class ViewController: UIViewController {
     
     @IBAction func stepperValueChanged(_ sender: Any) {
         tempo = Int(stepper.value)
-        metronome.play(bpm: Double(tempo))
+        if metronome.isPlaying {
+            metronome.play(bpm: Double(tempo))
+        }
     }
 }
 
