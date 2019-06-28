@@ -13,14 +13,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var stepper: UIStepper!
     @IBOutlet weak var tempoLabel: UILabel!
     
-    var metronome: Metronome = {
+    let metronome: Metronome = {
         let highUrl = Bundle.main.url(forResource: "High", withExtension: "wav")!
         let lowUrl = Bundle.main.url(forResource: "Low", withExtension: "wav")!
         return Metronome(mainClickFile: lowUrl, accentedClickFile: highUrl)
     }()
     var tempo = 0 {
         didSet {
-            tempoLabel.text = String(self.tempo)
+            tempoLabel.text = String(tempo)
         }
     }
     
