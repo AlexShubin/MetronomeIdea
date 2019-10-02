@@ -34,11 +34,11 @@ class ViewController: UIViewController {
         stepper.value = Double(tempo)
     }
     
-    @IBAction func StartPlayback(_ sender: Any) {
+    @IBAction func startPlayback(_ sender: Any) {
         metronome.play(bpm: Double(tempo))
     }
     
-    @IBAction func StopPlayback(_ sender: Any) {
+    @IBAction func stopPlayback(_ sender: Any) {
         metronome.stop()
     }
     
