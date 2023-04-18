@@ -8,19 +8,31 @@
 import SwiftUI
 
 struct MetronomeView: View {
-    let metronome = Metronome(
-        mainClickFile: Bundle.main.url(
-            forResource: "Low", withExtension: "wav"
-        )!,
-        accentedClickFile: Bundle.main.url(
-            forResource: "High", withExtension: "wav"
-        )!
-    )
+    @ObservedObject var metronome: Metronome
+
+    init() {
+        metronome = Metronome(
+            mainClickFile: Bundle.main.url(
+                forResource: "Low", withExtension: "wav"
+            )!,
+            accentedClickFile: Bundle.main.url(
+                forResource: "High", withExtension: "wav"
+            )!
+        )
+    }
 
     @State var tempo = 120
 
     var body: some View {
         VStack(spacing: 12) {
+            HStack {
+                circleBasedOn(division: 0)
+                circleBasedOn(division: 0.25)
+                circleBasedOn(division: 0.5)
+                circleBasedOn(division: 0.75)
+            }
+            .frame(height: 20)
+
             Stepper("Tempo: \(tempo)", value: $tempo, in: 10...300)
                 .onChange(of: tempo, perform: { newValue in
                     if metronome.isPlaying {
@@ -36,6 +48,16 @@ struct MetronomeView: View {
             }
         }
         .padding()
+    }
+
+    @ViewBuilder
+    private func circleBasedOn(division: CGFloat) -> some View {
+        let size: CGFloat = metronome.currentTimeWithinBar > division ? 15 : 10
+
+        Circle()
+            .fill(metronome.currentTimeWithinBar > division ? .red : .blue)
+            .frame(width: size, height: size)
+            .animation(.default, value: metronome.currentTimeWithinBar)
     }
 }
 
