@@ -52,12 +52,12 @@ struct MetronomeView: View {
 
     @ViewBuilder
     private func circleBasedOn(division: CGFloat) -> some View {
-        let size: CGFloat = metronome.currentTimeWithinBar > division ? 15 : 10
+        let size: CGFloat = metronome.currentProgressWithinBar > division ? 15 : 10
 
         Circle()
-            .fill(metronome.currentTimeWithinBar > division ? .red : .blue)
+            .fill(metronome.currentProgressWithinBar > division ? .red : .blue)
             .frame(width: size, height: size)
-            .animation(.default, value: metronome.currentTimeWithinBar)
+            .animation(.default, value: metronome.currentProgressWithinBar)
     }
 }
 

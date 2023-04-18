@@ -9,10 +9,21 @@
 import AVFoundation
 
 class Metronome: ObservableObject {
+    /// Current progress withing the bar. Changes from 0 to 1.
+    @Published var currentProgressWithinBar: Double = 0
 
-    // MARK: - Internal
+    private let audioPlayerNode: AVAudioPlayerNode
+    private let audioFileMainClick: AVAudioFile
+    private let audioFileAccentedClick: AVAudioFile
+    private let audioEngine: AVAudioEngine
 
-    @Published var currentTimeWithinBar: TimeInterval = 0
+    private lazy var displayLink: CADisplayLink = {
+        let displayLink = CADisplayLink(target: self, selector: #selector(updateCurrentTime))
+        displayLink.add(to: .current, forMode: .default)
+        return displayLink
+    }()
+
+    private var currentBuffer: AVAudioPCMBuffer?
 
     init (mainClickFile: URL, accentedClickFile: URL? = nil) {
         audioFileMainClick = try! AVAudioFile(forReading: mainClickFile)
@@ -30,11 +41,11 @@ class Metronome: ObservableObject {
     func stop() {
         audioPlayerNode.stop()
         displayLink.isPaused = true
-        currentTimeWithinBar = 0
+        currentProgressWithinBar = 0
     }
 
     var isPlaying: Bool {
-        return audioPlayerNode.isPlaying
+        audioPlayerNode.isPlaying
     }
 
     func play(bpm: Double) {
@@ -54,25 +65,20 @@ class Metronome: ObservableObject {
         )
     }
 
-    // MARK: - Private
-
-    private let audioPlayerNode: AVAudioPlayerNode
-    private let audioFileMainClick: AVAudioFile
-    private let audioFileAccentedClick: AVAudioFile
-    private let audioEngine: AVAudioEngine
-
-    private lazy var displayLink: CADisplayLink = {
-        let displayLink = CADisplayLink(target: self, selector: #selector(updateCurrentTime))
-        displayLink.add(to: .current, forMode: .default)
-        return displayLink
-    }()
-
     @objc private func updateCurrentTime() {
-        currentTimeWithinBar = currentTime
+        guard let nodeTime = audioPlayerNode.lastRenderTime,
+              let playerTime = audioPlayerNode.playerTime(forNodeTime: nodeTime),
+              let buffer = currentBuffer else {
+            currentProgressWithinBar = 0
+            return
+        }
+
+        currentProgressWithinBar = Double(playerTime.sampleTime)
+            .truncatingRemainder(dividingBy: Double(buffer.frameLength))
+        / (buffer.format.sampleRate * 2)
     }
     
     private func generateBuffer(bpm: Double) -> AVAudioPCMBuffer {
-        
         audioFileMainClick.framePosition = 0
         audioFileAccentedClick.framePosition = 0
         
@@ -112,19 +118,5 @@ class Metronome: ObservableObject {
         bufferBar.floatChannelData!.pointee.assign(from: barArray,
                                                    count: channelCount * Int(bufferBar.frameLength))
         return bufferBar
-    }
-
-    private var currentBuffer: AVAudioPCMBuffer?
-
-    private var currentTime: TimeInterval {
-        guard let nodeTime = audioPlayerNode.lastRenderTime,
-              let playerTime = audioPlayerNode.playerTime(forNodeTime: nodeTime),
-              let buffer = currentBuffer else {
-            return 0
-        }
-        
-        return Double(playerTime.sampleTime)
-            .truncatingRemainder(dividingBy: Double(buffer.frameLength))
-        / (buffer.format.sampleRate * 2)
     }
 }
