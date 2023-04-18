@@ -53,15 +53,17 @@ class Metronome: ObservableObject {
 
         currentBuffer = buffer
 
-        if !audioPlayerNode.isPlaying {
-            audioPlayerNode.play()
-            displayLink.isPaused = false
+        if audioPlayerNode.isPlaying {
+            audioPlayerNode.stop()
         }
+
+        displayLink.isPaused = false
+        audioPlayerNode.play()
 
         audioPlayerNode.scheduleBuffer(
             buffer,
             at: nil,
-            options: [.interrupts, .loops]
+            options: [.interruptsAtLoop, .loops]
         )
     }
 
@@ -75,7 +77,7 @@ class Metronome: ObservableObject {
 
         currentProgressWithinBar = Double(playerTime.sampleTime)
             .truncatingRemainder(dividingBy: Double(buffer.frameLength))
-        / (buffer.format.sampleRate * 2)
+        / Double(buffer.frameLength)
     }
     
     private func generateBuffer(bpm: Double) -> AVAudioPCMBuffer {

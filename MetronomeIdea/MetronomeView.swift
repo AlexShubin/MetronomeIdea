@@ -57,7 +57,7 @@ struct MetronomeView: View {
         Circle()
             .fill(metronome.currentProgressWithinBar > division ? .red : .blue)
             .frame(width: size, height: size)
-            .animation(.default, value: metronome.currentProgressWithinBar)
+            .animation(.linear(duration: 0.1), value: metronome.currentProgressWithinBar)
     }
 }
 
