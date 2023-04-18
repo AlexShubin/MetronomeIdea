@@ -9,7 +9,7 @@
 import AVFoundation
 
 class Metronome: ObservableObject {
-    /// Current progress withing the bar. Changes from 0 to 1.
+    /// Current progress within the bar. Changes from 0 to 1.
     @Published var currentProgressWithinBar: Double = 0
 
     private let audioPlayerNode: AVAudioPlayerNode
