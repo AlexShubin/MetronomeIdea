@@ -117,7 +117,7 @@ class Metronome: ObservableObject {
         for _ in 1...3 {
             barArray.append(contentsOf: mainClickArray)
         }
-        bufferBar.floatChannelData!.pointee.assign(from: barArray,
+        bufferBar.floatChannelData!.pointee.update(from: barArray,
                                                    count: channelCount * Int(bufferBar.frameLength))
         return bufferBar
     }
