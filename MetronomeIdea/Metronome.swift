@@ -8,24 +8,32 @@
 
 import AVFoundation
 
-class Metronome: ObservableObject {
-    /// Current progress within the bar. Changes from 0 to 1.
-    @Published var currentProgressWithinBar: Double = 0
+protocol MetronomeType {
+    func play(bpm: Double)
+    func stop()
+
+    var isPlaying: Bool { get }
+    var currentProgressWithinBar: Double { get }
+}
+
+class Metronome: MetronomeType {
+    static let sharedInstance = Metronome(
+        mainClickFile: Bundle.main.url(
+            forResource: "Low", withExtension: "wav"
+        )!,
+        accentedClickFile: Bundle.main.url(
+            forResource: "High", withExtension: "wav"
+        )!
+    )
 
     private let audioPlayerNode: AVAudioPlayerNode
     private let audioFileMainClick: AVAudioFile
     private let audioFileAccentedClick: AVAudioFile
     private let audioEngine: AVAudioEngine
 
-    private lazy var displayLink: CADisplayLink = {
-        let displayLink = CADisplayLink(target: self, selector: #selector(updateCurrentTime))
-        displayLink.add(to: .current, forMode: .default)
-        return displayLink
-    }()
-
     private var currentBuffer: AVAudioPCMBuffer?
 
-    init (mainClickFile: URL, accentedClickFile: URL? = nil) {
+    init(mainClickFile: URL, accentedClickFile: URL? = nil) {
         audioFileMainClick = try! AVAudioFile(forReading: mainClickFile)
         audioFileAccentedClick = try! AVAudioFile(forReading: accentedClickFile ?? mainClickFile)
         
@@ -40,8 +48,6 @@ class Metronome: ObservableObject {
 
     func stop() {
         audioPlayerNode.stop()
-        displayLink.isPaused = true
-        currentProgressWithinBar = 0
     }
 
     var isPlaying: Bool {
@@ -57,7 +63,6 @@ class Metronome: ObservableObject {
             audioPlayerNode.stop()
         }
 
-        displayLink.isPaused = false
         audioPlayerNode.play()
 
         audioPlayerNode.scheduleBuffer(
@@ -67,15 +72,15 @@ class Metronome: ObservableObject {
         )
     }
 
-    @objc private func updateCurrentTime() {
+    /// Current progress within the bar. Changes from 0 to 1.
+    var currentProgressWithinBar: Double {
         guard let nodeTime = audioPlayerNode.lastRenderTime,
               let playerTime = audioPlayerNode.playerTime(forNodeTime: nodeTime),
               let buffer = currentBuffer else {
-            currentProgressWithinBar = 0
-            return
+            return 0
         }
 
-        currentProgressWithinBar = Double(playerTime.sampleTime)
+        return Double(playerTime.sampleTime)
             .truncatingRemainder(dividingBy: Double(buffer.frameLength))
         / Double(buffer.frameLength)
     }

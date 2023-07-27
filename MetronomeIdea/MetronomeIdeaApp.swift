@@ -11,7 +11,9 @@ import SwiftUI
 struct MetronomeIdeaApp: App {
     var body: some Scene {
         WindowGroup {
-            MetronomeView()
+            MetronomeView(
+                viewModel: MetronomeViewModel(metronome: Metronome.sharedInstance)
+            )
         }
     }
 }

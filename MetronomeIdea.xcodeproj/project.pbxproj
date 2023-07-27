@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		178A1D922A727538008587D8 /* MetronomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178A1D912A727538008587D8 /* MetronomeViewModel.swift */; };
 		17B3FB0029929E1D00192D1C /* High.wav in Resources */ = {isa = PBXBuildFile; fileRef = 17B3FAFD29929E1D00192D1C /* High.wav */; };
 		17B3FB0129929E1D00192D1C /* Low.wav in Resources */ = {isa = PBXBuildFile; fileRef = 17B3FAFE29929E1D00192D1C /* Low.wav */; };
 		17B3FB0229929E1D00192D1C /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B3FAFF29929E1D00192D1C /* Metronome.swift */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		178A1D912A727538008587D8 /* MetronomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeViewModel.swift; sourceTree = "<group>"; };
 		17B3FAFD29929E1D00192D1C /* High.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = High.wav; sourceTree = "<group>"; };
 		17B3FAFE29929E1D00192D1C /* Low.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Low.wav; sourceTree = "<group>"; };
 		17B3FAFF29929E1D00192D1C /* Metronome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 			children = (
 				17D08DAB29929DC400F7DFAC /* MetronomeIdeaApp.swift */,
 				17D08DAD29929DC400F7DFAC /* MetronomeView.swift */,
+				178A1D912A727538008587D8 /* MetronomeViewModel.swift */,
 				17B3FAFD29929E1D00192D1C /* High.wav */,
 				17B3FAFE29929E1D00192D1C /* Low.wav */,
 				17B3FAFF29929E1D00192D1C /* Metronome.swift */,
@@ -149,6 +152,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				17B3FB0229929E1D00192D1C /* Metronome.swift in Sources */,
+				178A1D922A727538008587D8 /* MetronomeViewModel.swift in Sources */,
 				17D08DAE29929DC400F7DFAC /* MetronomeView.swift in Sources */,
 				17D08DAC29929DC400F7DFAC /* MetronomeIdeaApp.swift in Sources */,
 			);

@@ -8,61 +8,47 @@
 import SwiftUI
 
 struct MetronomeView: View {
-    @ObservedObject var metronome: Metronome
-
-    init() {
-        metronome = Metronome(
-            mainClickFile: Bundle.main.url(
-                forResource: "Low", withExtension: "wav"
-            )!,
-            accentedClickFile: Bundle.main.url(
-                forResource: "High", withExtension: "wav"
-            )!
-        )
-    }
-
-    @State var tempo = 120
+    @ObservedObject var viewModel: MetronomeViewModel
 
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                circleBasedOn(division: 0)
-                circleBasedOn(division: 0.25)
-                circleBasedOn(division: 0.5)
-                circleBasedOn(division: 0.75)
+                ForEach(viewModel.highlightedBeats) {
+                    circle(highlighted: $0.highlighted)
+                }
             }
             .frame(height: 20)
 
-            Stepper("Tempo: \(tempo)", value: $tempo, in: 10...300)
-                .onChange(of: tempo, perform: { newValue in
-                    if metronome.isPlaying {
-                        metronome.play(bpm: Double(newValue))
-                    }
-                })
-                .frame(maxWidth: 240)
+            Stepper("Tempo: \(viewModel.tempo)",
+                    value: .init(get: { viewModel.tempo },
+                                 set: { viewModel.accept(action: .tempoChanged(tempo: $0)) }),
+                    in: 10...300)
+            .frame(maxWidth: 240)
             Button("Start") {
-                metronome.play(bpm: Double(tempo))
+                viewModel.accept(action: .play)
             }
             Button("Stop") {
-                metronome.stop()
+                viewModel.accept(action: .stop)
             }
         }
         .padding()
     }
 
     @ViewBuilder
-    private func circleBasedOn(division: CGFloat) -> some View {
-        let size: CGFloat = metronome.currentProgressWithinBar > division ? 15 : 10
+    private func circle(highlighted: Bool) -> some View {
+        let size: CGFloat = highlighted ? 15 : 10
 
         Circle()
-            .fill(metronome.currentProgressWithinBar > division ? .red : .blue)
+            .fill(highlighted ? .red : .blue)
             .frame(width: size, height: size)
-            .animation(.linear(duration: 0.1), value: metronome.currentProgressWithinBar)
+            .animation(.linear(duration: 0.1), value: viewModel.highlightedBeats)
     }
 }
 
 struct MetronomeView_Previews: PreviewProvider {
     static var previews: some View {
-        MetronomeView()
+        MetronomeView(
+            viewModel: MetronomeViewModel(metronome: Metronome.sharedInstance)
+        )
     }
 }
