@@ -1,6 +1,7 @@
 # Metronome Idea
-IOS Metronome Idea based on AVAudioEngine (Swift)
 
-An Idea of how to make an accurate metronome on Swift using AVAudioEngine
+💡 An example of how we can possibly make an accurate metronome with Swift using `AVAudioEngine`.
 
-This one is based on the sample rate - not on some kind of timer
+📝 This one is based on the sample rate - not on some sort of a timer.
+
+🚀 Feel free to use it to build more complex apps.
