@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct MetronomeView: View {
-    @ObservedObject var viewModel: MetronomeViewModel
+    @State var viewModel: MetronomeViewModel
 
     var body: some View {
         VStack(spacing: 12) {
@@ -46,10 +46,8 @@ struct MetronomeView: View {
     }
 }
 
-struct MetronomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        MetronomeView(
-            viewModel: MetronomeViewModel(metronome: Metronome.sharedInstance)
-        )
-    }
+#Preview {
+    MetronomeView(
+        viewModel: MetronomeViewModel(metronome: Metronome.sharedInstance)
+    )
 }

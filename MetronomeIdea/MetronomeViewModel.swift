@@ -20,20 +20,20 @@ struct Beat: Identifiable, Equatable {
     let highlighted: Bool
 }
 
-class MetronomeViewModel: ObservableObject {
-    @Published var highlightedBeats: [Beat] = .initial
-    @Published var tempo = 120
+@Observable
+@MainActor
+class MetronomeViewModel {
+    var highlightedBeats: [Beat] = .initial
+    var tempo = 120
 
     private let metronome: MetronomeType
+    private var displayLink: CADisplayLink!
 
-    private lazy var displayLink: CADisplayLink = {
-        let displayLink = CADisplayLink(target: self, selector: #selector(updateHighlightedBeats))
-        displayLink.add(to: .current, forMode: .default)
-        return displayLink
-    }()
 
     init(metronome: MetronomeType) {
         self.metronome = metronome
+        self.displayLink = CADisplayLink(target: self, selector: #selector(updateHighlightedBeats))
+        displayLink.add(to: .current, forMode: .default)
     }
 
     @objc private func updateHighlightedBeats() {
