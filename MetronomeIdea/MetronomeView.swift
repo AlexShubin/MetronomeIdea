@@ -1,8 +1,9 @@
 //
-//  ContentView.swift
+//  MetronomeView.swift
 //  MetronomeIdea
 //
-//  Created by ashubin on 07.02.23.
+//  Created by Alex Shubin on 07.02.23.
+//  Copyright © 2023 Alex Shubin. All rights reserved.
 //
 
 import SwiftUI

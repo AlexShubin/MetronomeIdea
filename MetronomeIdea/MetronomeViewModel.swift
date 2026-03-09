@@ -2,7 +2,8 @@
 //  MetronomeViewModel.swift
 //  MetronomeIdea
 //
-//  Created by ashubin on 27.07.23.
+//  Created by Alex Shubin on 27.07.23.
+//  Copyright © 2023 Alex Shubin. All rights reserved.
 //
 
 import Foundation
