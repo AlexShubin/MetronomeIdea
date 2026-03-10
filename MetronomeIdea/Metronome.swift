@@ -13,7 +13,7 @@ protocol MetronomeType {
     func stop()
 
     var isPlaying: Bool { get }
-    var currentProgressWithinBar: Double { get }
+    var currentProgressWithinBar: ProgressWithinBar { get }
 }
 
 class Metronome: MetronomeType {
@@ -73,16 +73,18 @@ class Metronome: MetronomeType {
     }
 
     /// Current progress within the bar. Changes from 0 to 1.
-    var currentProgressWithinBar: Double {
+    var currentProgressWithinBar: ProgressWithinBar {
         guard let nodeTime = audioPlayerNode.lastRenderTime,
               let playerTime = audioPlayerNode.playerTime(forNodeTime: nodeTime),
               let buffer = currentBuffer else {
-            return 0
+            return ProgressWithinBar(value: 0)
         }
 
-        return Double(playerTime.sampleTime)
-            .truncatingRemainder(dividingBy: Double(buffer.frameLength))
-        / Double(buffer.frameLength)
+        return ProgressWithinBar(
+            value: Double(playerTime.sampleTime)
+                .truncatingRemainder(dividingBy: Double(buffer.frameLength))
+            / Double(buffer.frameLength)
+        )
     }
     
     private func generateBuffer(bpm: Double) -> AVAudioPCMBuffer {

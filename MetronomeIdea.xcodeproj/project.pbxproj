@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17C2E00626090300008587D8 /* ProgressWithinBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2E00526090300008587D8 /* ProgressWithinBar.swift */; };
 		17C2E00226090300008587D8 /* DisplayLinkStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2E00126090300008587D8 /* DisplayLinkStream.swift */; };
 		17C2E00426090300008587D8 /* MetronomeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2E00326090300008587D8 /* MetronomeUseCase.swift */; };
 		178A1D922A727538008587D8 /* MetronomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178A1D912A727538008587D8 /* MetronomeViewModel.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		17C2E00526090300008587D8 /* ProgressWithinBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressWithinBar.swift; sourceTree = "<group>"; };
 		17C2E00126090300008587D8 /* DisplayLinkStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayLinkStream.swift; sourceTree = "<group>"; };
 		17C2E00326090300008587D8 /* MetronomeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeUseCase.swift; sourceTree = "<group>"; };
 		178A1D912A727538008587D8 /* MetronomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeViewModel.swift; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 		17D08DAA29929DC400F7DFAC /* MetronomeIdea */ = {
 			isa = PBXGroup;
 			children = (
+				17C2E00726090300008587D8 /* Entities */,
 				17D08DAB29929DC400F7DFAC /* MetronomeIdeaApp.swift */,
 				17D08DAD29929DC400F7DFAC /* MetronomeView.swift */,
 				178A1D912A727538008587D8 /* MetronomeViewModel.swift */,
@@ -75,6 +78,14 @@
 				17D08DB129929DC500F7DFAC /* Preview Content */,
 			);
 			path = MetronomeIdea;
+			sourceTree = "<group>";
+		};
+		17C2E00726090300008587D8 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				17C2E00526090300008587D8 /* ProgressWithinBar.swift */,
+			);
+			path = Entities;
 			sourceTree = "<group>";
 		};
 		17D08DB129929DC500F7DFAC /* Preview Content */ = {
@@ -157,6 +168,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17C2E00626090300008587D8 /* ProgressWithinBar.swift in Sources */,
 				17B3FB0229929E1D00192D1C /* Metronome.swift in Sources */,
 				17C2E00226090300008587D8 /* DisplayLinkStream.swift in Sources */,
 				17C2E00426090300008587D8 /* MetronomeUseCase.swift in Sources */,

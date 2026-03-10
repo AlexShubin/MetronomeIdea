@@ -14,7 +14,7 @@ protocol DisplayLinkStreamType {
     func resume()
 }
 
-class DisplayLinkStream: NSObject, DisplayLinkStreamType {
+class DisplayLinkStream: DisplayLinkStreamType {
     private var displayLink: CADisplayLink!
     private var continuation: AsyncStream<Void>.Continuation?
 
@@ -27,8 +27,7 @@ class DisplayLinkStream: NSObject, DisplayLinkStreamType {
         }
     }
 
-    override init() {
-        super.init()
+    init() {
         displayLink = CADisplayLink(target: self, selector: #selector(tick))
         displayLink.add(to: .current, forMode: .default)
         displayLink.isPaused = true

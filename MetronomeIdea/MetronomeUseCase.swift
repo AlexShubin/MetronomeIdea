@@ -14,10 +14,6 @@ protocol MetronomeUseCaseType {
     var currentProgressWithinBar: AsyncStream<ProgressWithinBar> { get }
 }
 
-struct ProgressWithinBar {
-    let value: Double
-}
-
 class MetronomeUseCase: MetronomeUseCaseType {
     private let metronome: MetronomeType
     private let displayLink: DisplayLinkStreamType
@@ -26,7 +22,7 @@ class MetronomeUseCase: MetronomeUseCaseType {
         AsyncStream { [displayLink, metronome] continuation in
             Task {
                 for await _ in displayLink.ticks {
-                    continuation.yield(ProgressWithinBar(value: metronome.currentProgressWithinBar))
+                    continuation.yield(metronome.currentProgressWithinBar)
                 }
                 continuation.finish()
             }

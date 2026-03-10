@@ -48,6 +48,11 @@ struct MetronomeView: View {
 
 #Preview {
     MetronomeView(
-        viewModel: MetronomeViewModel(metronome: Metronome.sharedInstance)
+        viewModel: MetronomeViewModel(
+            useCase: MetronomeUseCase(
+                metronome: Metronome.sharedInstance,
+                displayLink: DisplayLinkStream()
+            )
+        )
     )
 }

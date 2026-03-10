@@ -13,7 +13,12 @@ struct MetronomeIdeaApp: App {
     var body: some Scene {
         WindowGroup {
             MetronomeView(
-                viewModel: MetronomeViewModel(metronome: Metronome.sharedInstance)
+                viewModel: MetronomeViewModel(
+                    useCase: MetronomeUseCase(
+                        metronome: Metronome.sharedInstance,
+                        displayLink: DisplayLinkStream()
+                    )
+                )
             )
         }
     }

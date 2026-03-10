@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import QuartzCore.CADisplayLink
 
 enum MetronomeViewModelAction {
     case tempoChanged(tempo: Int)
@@ -26,41 +25,41 @@ class MetronomeViewModel {
     var highlightedBeats: [Beat] = .initial
     var tempo = 120
 
-    private let metronome: MetronomeType
-    private var displayLink: CADisplayLink!
+    @ObservationIgnored private let useCase: MetronomeUseCaseType
+    @ObservationIgnored private var progressTask: Task<Void, Never>?
 
-
-    init(metronome: MetronomeType) {
-        self.metronome = metronome
-        self.displayLink = CADisplayLink(target: self, selector: #selector(updateHighlightedBeats))
-        displayLink.add(to: .current, forMode: .default)
-        displayLink.isPaused = true
-    }
-
-    @objc private func updateHighlightedBeats() {
-        let progress = metronome.currentProgressWithinBar
-        highlightedBeats = [
-            .init(id: 0, highlighted: progress > 0),
-            .init(id: 1, highlighted: progress > 0.25),
-            .init(id: 2, highlighted: progress > 0.5),
-            .init(id: 3, highlighted: progress > 0.75)
-        ]
+    init(useCase: MetronomeUseCaseType) {
+        self.useCase = useCase
     }
 
     func accept(action: MetronomeViewModelAction) {
         switch action {
         case .tempoChanged(let tempo):
             self.tempo = tempo
-            if metronome.isPlaying {
-                metronome.play(bpm: Double(tempo))
-            }
+            useCase.changeTempo(to: Double(tempo))
         case .play:
-            displayLink.isPaused = false
-            metronome.play(bpm: Double(tempo))
+            useCase.play(bpm: Double(tempo))
+            startObservingProgress()
         case .stop:
-            metronome.stop()
-            displayLink.isPaused = true
+            useCase.stop()
+            progressTask?.cancel()
+            progressTask = nil
             highlightedBeats = .initial
+        }
+    }
+
+    private func startObservingProgress() {
+        progressTask?.cancel()
+        progressTask = Task { [weak self] in
+            guard let self else { return }
+            for await progress in useCase.currentProgressWithinBar {
+                highlightedBeats = [
+                    .init(id: 0, highlighted: progress.value > 0),
+                    .init(id: 1, highlighted: progress.value > 0.25),
+                    .init(id: 2, highlighted: progress.value > 0.5),
+                    .init(id: 3, highlighted: progress.value > 0.75)
+                ]
+            }
         }
     }
 }
