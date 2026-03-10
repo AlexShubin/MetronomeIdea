@@ -12,6 +12,7 @@ enum MetronomeViewModelAction {
     case tempoChanged(tempo: Int)
     case play
     case stop
+    case settingsTapped
 }
 
 struct Beat: Identifiable, Equatable {
@@ -24,6 +25,7 @@ struct Beat: Identifiable, Equatable {
 class MetronomeViewModel {
     var highlightedBeats: [Beat] = .initial
     var tempo = 120
+    var destination: MetronomeDestination?
 
     @ObservationIgnored private let useCase: MetronomeUseCaseType
     @ObservationIgnored private var progressTask: Task<Void, Never>?
@@ -45,6 +47,8 @@ class MetronomeViewModel {
             progressTask?.cancel()
             progressTask = nil
             highlightedBeats = .initial
+        case .settingsTapped:
+            destination = .settings
         }
     }
 

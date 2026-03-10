@@ -18,7 +18,8 @@ struct MetronomeIdeaApp: App {
                         metronome: Metronome.sharedInstance,
                         displayLink: DisplayLinkStream()
                     )
-                )
+                ),
+                factory: MetronomeViewFactory()
             )
         }
     }

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17C2E00826090300008587D8 /* MetronomeDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2E00926090300008587D8 /* MetronomeDestination.swift */; };
+		17C2E01026090300008587D8 /* MetronomeViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2E01126090300008587D8 /* MetronomeViewFactory.swift */; };
+		17C2E01226090300008587D8 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2E01326090300008587D8 /* SettingsViewModel.swift */; };
+		17C2E01426090300008587D8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2E01526090300008587D8 /* SettingsView.swift */; };
 		17C2E00626090300008587D8 /* ProgressWithinBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2E00526090300008587D8 /* ProgressWithinBar.swift */; };
 		17C2E00226090300008587D8 /* DisplayLinkStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2E00126090300008587D8 /* DisplayLinkStream.swift */; };
 		17C2E00426090300008587D8 /* MetronomeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2E00326090300008587D8 /* MetronomeUseCase.swift */; };
@@ -21,6 +25,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		17C2E00926090300008587D8 /* MetronomeDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeDestination.swift; sourceTree = "<group>"; };
+		17C2E01126090300008587D8 /* MetronomeViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeViewFactory.swift; sourceTree = "<group>"; };
+		17C2E01326090300008587D8 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		17C2E01526090300008587D8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		17C2E00526090300008587D8 /* ProgressWithinBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressWithinBar.swift; sourceTree = "<group>"; };
 		17C2E00126090300008587D8 /* DisplayLinkStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayLinkStream.swift; sourceTree = "<group>"; };
 		17C2E00326090300008587D8 /* MetronomeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeUseCase.swift; sourceTree = "<group>"; };
@@ -71,6 +79,9 @@
 				178A1D912A727538008587D8 /* MetronomeViewModel.swift */,
 				17C2E00326090300008587D8 /* MetronomeUseCase.swift */,
 				17C2E00126090300008587D8 /* DisplayLinkStream.swift */,
+				17C2E01126090300008587D8 /* MetronomeViewFactory.swift */,
+				17C2E01326090300008587D8 /* SettingsViewModel.swift */,
+				17C2E01526090300008587D8 /* SettingsView.swift */,
 				17B3FAFD29929E1D00192D1C /* High.wav */,
 				17B3FAFE29929E1D00192D1C /* Low.wav */,
 				17B3FAFF29929E1D00192D1C /* Metronome.swift */,
@@ -84,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				17C2E00526090300008587D8 /* ProgressWithinBar.swift */,
+				17C2E00926090300008587D8 /* MetronomeDestination.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -169,6 +181,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				17C2E00626090300008587D8 /* ProgressWithinBar.swift in Sources */,
+				17C2E00826090300008587D8 /* MetronomeDestination.swift in Sources */,
+				17C2E01026090300008587D8 /* MetronomeViewFactory.swift in Sources */,
+				17C2E01226090300008587D8 /* SettingsViewModel.swift in Sources */,
+				17C2E01426090300008587D8 /* SettingsView.swift in Sources */,
 				17B3FB0229929E1D00192D1C /* Metronome.swift in Sources */,
 				17C2E00226090300008587D8 /* DisplayLinkStream.swift in Sources */,
 				17C2E00426090300008587D8 /* MetronomeUseCase.swift in Sources */,

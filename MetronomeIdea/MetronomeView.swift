@@ -10,6 +10,7 @@ import SwiftUI
 
 struct MetronomeView: View {
     @State var viewModel: MetronomeViewModel
+    let factory: MetronomeViewFactoryType
 
     var body: some View {
         VStack(spacing: 12) {
@@ -31,8 +32,17 @@ struct MetronomeView: View {
             Button("Stop") {
                 viewModel.accept(action: .stop)
             }
+            Button("Settings") {
+                viewModel.accept(action: .settingsTapped)
+            }
         }
         .padding()
+        .sheet(item: $viewModel.destination) { destination in
+            switch destination {
+            case .settings:
+                SettingsView(viewModel: factory.makeSettingsViewModel())
+            }
+        }
     }
 
     @ViewBuilder
@@ -53,6 +63,7 @@ struct MetronomeView: View {
                 metronome: Metronome.sharedInstance,
                 displayLink: DisplayLinkStream()
             )
-        )
+        ),
+        factory: MetronomeViewFactory()
     )
 }
