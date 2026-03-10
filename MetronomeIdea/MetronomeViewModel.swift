@@ -34,6 +34,7 @@ class MetronomeViewModel {
         self.metronome = metronome
         self.displayLink = CADisplayLink(target: self, selector: #selector(updateHighlightedBeats))
         displayLink.add(to: .current, forMode: .default)
+        displayLink.isPaused = true
     }
 
     @objc private func updateHighlightedBeats() {
