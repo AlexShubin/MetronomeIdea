@@ -17,6 +17,10 @@ protocol MetronomeUseCaseType {
     var currentProgress: ProgressWithinBar { get }
 }
 
+struct ProgressWithinBar {
+    let value: Double
+}
+
 @Observable
 class MetronomeUseCase: MetronomeUseCaseType {
     @ObservationIgnored private let metronome: MetronomeType
