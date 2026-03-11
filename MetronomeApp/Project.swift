@@ -1,7 +1,7 @@
 import ProjectDescription
 
 let project = Project(
-    name: "MetronomeIdea",
+    name: "MetronomeApp",
     settings: .settings(
         base: [
             "SWIFT_VERSION": "6.0",
@@ -17,19 +17,19 @@ let project = Project(
     ),
     targets: [
         .target(
-            name: "MetronomeIdea",
+            name: "MetronomeApp",
             destinations: .iOS,
             product: .app,
-            bundleId: "com.alexshubin.MetronomeIdea",
+            bundleId: "com.alexshubin.MetronomeApp",
             deploymentTargets: .iOS("26.0"),
             infoPlist: .extendingDefault(with: [
                 "UILaunchScreen": ["UIColorName": "", "UIImageName": ""],
             ]),
-            sources: ["MetronomeIdea/Sources/**"],
-            resources: [
-                "MetronomeIdea/Resources/**",
-            ],
-            dependencies: []
+            sources: ["Sources/**"],
+            resources: ["Resources/**"],
+            dependencies: [
+                .project(target: "MetronomeEngine", path: "../MetronomeEngine"),
+            ]
         ),
     ]
 )

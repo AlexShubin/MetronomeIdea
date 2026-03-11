@@ -1,22 +1,16 @@
 //
 //  ViewModelFactory.swift
-//  MetronomeIdea
+//  MetronomeApp
 //
 //  Created by Alex Shubin on 09.03.26.
 //  Copyright © 2026 Alex Shubin. All rights reserved.
 //
 
+import MetronomeEngine
 import SwiftUI
 
 struct ViewModelFactory {
-    let metronomeShared: MetronomeType = Metronome(
-        mainClickFile: Bundle.main.url(
-            forResource: "Low", withExtension: "wav"
-        )!,
-        accentedClickFile: Bundle.main.url(
-            forResource: "High", withExtension: "wav"
-        )!
-    )
+    let metronomeShared: MetronomeType = Metronome()
     let displayLinkTickerShared: DisplayLinkTickerType = DisplayLinkTicker()
 
     func makeMetronomeViewModel() -> MetronomeViewModel {

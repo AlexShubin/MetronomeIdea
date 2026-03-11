@@ -10,6 +10,6 @@ import PackageDescription
 #endif
 
 let package = Package(
-    name: "MetronomeIdea",
+    name: "MetronomeApp",
     dependencies: []
 )

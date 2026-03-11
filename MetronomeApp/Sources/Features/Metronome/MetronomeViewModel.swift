@@ -1,6 +1,6 @@
 //
 //  MetronomeViewModel.swift
-//  MetronomeIdea
+//  MetronomeApp
 //
 //  Created by Alex Shubin on 27.07.23.
 //  Copyright © 2023 Alex Shubin. All rights reserved.

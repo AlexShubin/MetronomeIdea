@@ -1,6 +1,6 @@
 //
 //  Metronome.swift
-//  MetronomeIdea
+//  MetronomeEngine
 //
 //  Created by Alex Shubin on 26.03.17.
 //  Copyright © 2017 Alex Shubin. All rights reserved.
@@ -8,7 +8,7 @@
 
 import AVFoundation
 
-protocol MetronomeType {
+public protocol MetronomeType {
     func play(bpm: Double)
     func stop()
 
@@ -16,7 +16,7 @@ protocol MetronomeType {
     var currentProgressWithinBar: Double { get }
 }
 
-class Metronome: MetronomeType {
+public class Metronome: MetronomeType {
     private let audioPlayerNode: AVAudioPlayerNode
     private let audioFileMainClick: AVAudioFile
     private let audioFileAccentedClick: AVAudioFile
@@ -24,9 +24,12 @@ class Metronome: MetronomeType {
 
     private var currentBuffer: AVAudioPCMBuffer?
 
-    init(mainClickFile: URL, accentedClickFile: URL? = nil) {
+    public init() {
+        let mainClickFile = Bundle.module.url(forResource: "Low", withExtension: "wav")!
+        let accentedClickFile = Bundle.module.url(forResource: "High", withExtension: "wav")!
+
         audioFileMainClick = try! AVAudioFile(forReading: mainClickFile)
-        audioFileAccentedClick = try! AVAudioFile(forReading: accentedClickFile ?? mainClickFile)
+        audioFileAccentedClick = try! AVAudioFile(forReading: accentedClickFile)
         
         audioPlayerNode = AVAudioPlayerNode()
         
@@ -37,15 +40,15 @@ class Metronome: MetronomeType {
         try! audioEngine.start()
     }
 
-    func stop() {
+    public func stop() {
         audioPlayerNode.stop()
     }
 
-    var isPlaying: Bool {
+    public var isPlaying: Bool {
         audioPlayerNode.isPlaying
     }
 
-    func play(bpm: Double) {
+    public func play(bpm: Double) {
         let buffer = generateBuffer(bpm: bpm)
 
         currentBuffer = buffer
@@ -64,7 +67,7 @@ class Metronome: MetronomeType {
     }
 
     /// Current progress within the bar. Changes from 0 to 1.
-    var currentProgressWithinBar: Double {
+    public var currentProgressWithinBar: Double {
         guard let nodeTime = audioPlayerNode.lastRenderTime,
               let playerTime = audioPlayerNode.playerTime(forNodeTime: nodeTime),
               let buffer = currentBuffer else {
