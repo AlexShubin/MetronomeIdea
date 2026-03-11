@@ -21,6 +21,16 @@ struct Beat: Identifiable, Equatable {
     let highlighted: Bool
 }
 
+enum MetronomeDestination: Identifiable, Equatable {
+    case settings
+
+    var id: String {
+        switch self {
+        case .settings: "settings"
+        }
+    }
+}
+
 @Observable
 class MetronomeViewModel {
     var tempo = 120
