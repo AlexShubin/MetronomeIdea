@@ -17,15 +17,6 @@ protocol MetronomeType {
 }
 
 class Metronome: MetronomeType {
-    @MainActor static let sharedInstance = Metronome(
-        mainClickFile: Bundle.main.url(
-            forResource: "Low", withExtension: "wav"
-        )!,
-        accentedClickFile: Bundle.main.url(
-            forResource: "High", withExtension: "wav"
-        )!
-    )
-
     private let audioPlayerNode: AVAudioPlayerNode
     private let audioFileMainClick: AVAudioFile
     private let audioFileAccentedClick: AVAudioFile

@@ -22,7 +22,6 @@ struct Beat: Identifiable, Equatable {
 }
 
 @Observable
-@MainActor
 class MetronomeViewModel {
     var highlightedBeats: [Beat] = .initial
     var tempo = 120
@@ -55,15 +54,12 @@ class MetronomeViewModel {
     private func startObservingProgress() {
         cancellable = useCase.currentProgressWithinBar
             .sink { [weak self] progress in
-                MainActor.assumeIsolated {
-                    guard let self else { return }
-                    self.highlightedBeats = [
-                        .init(id: 0, highlighted: progress.value > 0),
-                        .init(id: 1, highlighted: progress.value > 0.25),
-                        .init(id: 2, highlighted: progress.value > 0.5),
-                        .init(id: 3, highlighted: progress.value > 0.75)
-                    ]
-                }
+                self?.highlightedBeats = [
+                    .init(id: 0, highlighted: progress.value > 0),
+                    .init(id: 1, highlighted: progress.value > 0.25),
+                    .init(id: 2, highlighted: progress.value > 0.5),
+                    .init(id: 3, highlighted: progress.value > 0.75)
+                ]
             }
     }
 }
