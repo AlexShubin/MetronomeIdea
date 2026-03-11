@@ -7,45 +7,48 @@
 //
 
 import MetronomeEngine
-import Observation
+
+struct ProgressWithinBar {
+    let value: Double
+}
 
 protocol MetronomeUseCaseType {
     func play(bpm: Double)
     func stop()
     func changeTempo(to bpm: Double)
 
-    var currentProgress: ProgressWithinBar { get }
+    var currentProgress: AsyncStream<ProgressWithinBar> { get }
 }
 
-struct ProgressWithinBar {
-    let value: Double
-}
-
-@Observable
 class MetronomeUseCase: MetronomeUseCaseType {
-    @ObservationIgnored private let metronome: MetronomeType
-    @ObservationIgnored private let displayLink: DisplayLinkTickerType
-    @ObservationIgnored private var tickTask: Task<Void, Never>?
-
-    private(set) var currentProgress = ProgressWithinBar(value: 0)
+    private let metronome: MetronomeType
+    private let displayLink: DisplayLinkTickerType
 
     init(metronome: MetronomeType, displayLink: DisplayLinkTickerType) {
         self.metronome = metronome
         self.displayLink = displayLink
     }
 
+    var currentProgress: AsyncStream<ProgressWithinBar> {
+        return AsyncStream { continuation in
+            let task = Task {
+                for await _ in displayLink.ticks {
+                    continuation.yield(ProgressWithinBar(value: metronome.currentProgressWithinBar))
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { _ in task.cancel() }
+        }
+    }
+
     func play(bpm: Double) {
         metronome.play(bpm: bpm)
         displayLink.resume()
-        startObserving()
     }
 
     func stop() {
         metronome.stop()
         displayLink.pause()
-        tickTask?.cancel()
-        tickTask = nil
-        currentProgress = ProgressWithinBar(value: 0)
     }
 
     func changeTempo(to bpm: Double) {
@@ -53,13 +56,5 @@ class MetronomeUseCase: MetronomeUseCaseType {
             metronome.play(bpm: bpm)
         }
     }
-
-    private func startObserving() {
-        tickTask?.cancel()
-        tickTask = Task { [weak self, displayLink, metronome] in
-            for await _ in displayLink.ticks {
-                self?.currentProgress = ProgressWithinBar(value: metronome.currentProgressWithinBar)
-            }
-        }
-    }
 }
+
