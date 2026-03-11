@@ -16,8 +16,7 @@ Install [mise](https://mise.jdx.dev/getting-started.html) if you don't have it y
 
 ```bash
 mise install          # installs Tuist (version pinned in .mise.toml)
-tuist install         # resolves dependencies
-tuist generate        # generates the Xcode project
+mise run generate     # resolves dependencies and generates the Xcode project
 ```
 
 Then open `MetronomeIdea.xcworkspace` in Xcode and run.

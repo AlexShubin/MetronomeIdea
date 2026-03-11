@@ -24,17 +24,6 @@ let project = Project(
             deploymentTargets: .iOS("26.0"),
             infoPlist: .extendingDefault(with: [
                 "UILaunchScreen": ["UIColorName": "", "UIImageName": ""],
-                "UISupportedInterfaceOrientations": [
-                    "UIInterfaceOrientationPortrait",
-                    "UIInterfaceOrientationLandscapeLeft",
-                    "UIInterfaceOrientationLandscapeRight",
-                ],
-                "UISupportedInterfaceOrientations~ipad": [
-                    "UIInterfaceOrientationPortrait",
-                    "UIInterfaceOrientationPortraitUpsideDown",
-                    "UIInterfaceOrientationLandscapeLeft",
-                    "UIInterfaceOrientationLandscapeRight",
-                ],
             ]),
             sources: ["MetronomeIdea/Sources/**"],
             resources: [
