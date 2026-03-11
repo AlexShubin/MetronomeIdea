@@ -53,7 +53,7 @@ class MetronomeUseCase: MetronomeUseCaseType {
         tickTask?.cancel()
         tickTask = Task { [weak self, displayLink, metronome] in
             for await _ in displayLink.ticks {
-                self?.currentProgress = metronome.currentProgressWithinBar
+                self?.currentProgress = ProgressWithinBar(value: metronome.currentProgressWithinBar)
             }
         }
     }
