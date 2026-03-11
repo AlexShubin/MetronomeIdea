@@ -17,7 +17,7 @@ protocol MetronomeType {
 }
 
 class Metronome: MetronomeType {
-    static let sharedInstance = Metronome(
+    @MainActor static let sharedInstance = Metronome(
         mainClickFile: Bundle.main.url(
             forResource: "Low", withExtension: "wav"
         )!,

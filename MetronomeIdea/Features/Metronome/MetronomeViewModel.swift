@@ -6,6 +6,7 @@
 //  Copyright © 2023 Alex Shubin. All rights reserved.
 //
 
+import Combine
 import Foundation
 
 enum MetronomeViewModelAction {
@@ -28,7 +29,7 @@ class MetronomeViewModel {
     var destination: MetronomeDestination?
 
     @ObservationIgnored private let useCase: MetronomeUseCaseType
-    @ObservationIgnored private var progressTask: Task<Void, Never>?
+    @ObservationIgnored private var cancellable: AnyCancellable?
 
     init(useCase: MetronomeUseCaseType) {
         self.useCase = useCase
@@ -44,8 +45,7 @@ class MetronomeViewModel {
             startObservingProgress()
         case .stop:
             useCase.stop()
-            progressTask?.cancel()
-            progressTask = nil
+            cancellable = nil
             highlightedBeats = .initial
         case .settingsTapped:
             destination = .settings
@@ -53,18 +53,18 @@ class MetronomeViewModel {
     }
 
     private func startObservingProgress() {
-        progressTask?.cancel()
-        progressTask = Task { [weak self] in
-            guard let self else { return }
-            for await progress in useCase.currentProgressWithinBar {
-                highlightedBeats = [
-                    .init(id: 0, highlighted: progress.value > 0),
-                    .init(id: 1, highlighted: progress.value > 0.25),
-                    .init(id: 2, highlighted: progress.value > 0.5),
-                    .init(id: 3, highlighted: progress.value > 0.75)
-                ]
+        cancellable = useCase.currentProgressWithinBar
+            .sink { [weak self] progress in
+                MainActor.assumeIsolated {
+                    guard let self else { return }
+                    self.highlightedBeats = [
+                        .init(id: 0, highlighted: progress.value > 0),
+                        .init(id: 1, highlighted: progress.value > 0.25),
+                        .init(id: 2, highlighted: progress.value > 0.5),
+                        .init(id: 3, highlighted: progress.value > 0.75)
+                    ]
+                }
             }
-        }
     }
 }
 

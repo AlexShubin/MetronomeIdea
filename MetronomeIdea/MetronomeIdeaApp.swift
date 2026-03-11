@@ -16,7 +16,7 @@ struct MetronomeIdeaApp: App {
                 viewModel: MetronomeViewModel(
                     useCase: MetronomeUseCase(
                         metronome: Metronome.sharedInstance,
-                        displayLink: DisplayLinkStream()
+                        displayLink: DisplayLinkTicker()
                     )
                 ),
                 factory: MetronomeViewFactory()

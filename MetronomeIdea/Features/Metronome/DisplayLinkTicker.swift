@@ -1,30 +1,26 @@
 //
-//  DisplayLinkStream.swift
+//  DisplayLinkTicker.swift
 //  MetronomeIdea
 //
 //  Created by Alex Shubin on 09.03.26.
 //  Copyright © 2026 Alex Shubin. All rights reserved.
 //
 
+import Combine
 import QuartzCore.CADisplayLink
 
-protocol DisplayLinkStreamType {
-    var ticks: AsyncStream<Void> { get }
+protocol DisplayLinkTickerType {
+    var ticks: AnyPublisher<Void, Never> { get }
     func pause()
     func resume()
 }
 
-class DisplayLinkStream: DisplayLinkStreamType {
+class DisplayLinkTicker: DisplayLinkTickerType {
     private var displayLink: CADisplayLink!
-    private var continuation: AsyncStream<Void>.Continuation?
+    private let subject = PassthroughSubject<Void, Never>()
 
-    var ticks: AsyncStream<Void> {
-        AsyncStream { continuation in
-            self.continuation = continuation
-            continuation.onTermination = { [weak self] _ in
-                self?.continuation = nil
-            }
-        }
+    var ticks: AnyPublisher<Void, Never> {
+        subject.eraseToAnyPublisher()
     }
 
     init() {
@@ -42,6 +38,6 @@ class DisplayLinkStream: DisplayLinkStreamType {
     }
 
     @objc private func tick() {
-        continuation?.yield()
+        subject.send()
     }
 }

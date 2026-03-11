@@ -6,30 +6,27 @@
 //  Copyright © 2026 Alex Shubin. All rights reserved.
 //
 
+import Combine
+
 protocol MetronomeUseCaseType {
     func play(bpm: Double)
     func stop()
     func changeTempo(to bpm: Double)
 
-    var currentProgressWithinBar: AsyncStream<ProgressWithinBar> { get }
+    var currentProgressWithinBar: AnyPublisher<ProgressWithinBar, Never> { get }
 }
 
 class MetronomeUseCase: MetronomeUseCaseType {
     private let metronome: MetronomeType
-    private let displayLink: DisplayLinkStreamType
+    private let displayLink: DisplayLinkTickerType
 
-    var currentProgressWithinBar: AsyncStream<ProgressWithinBar> {
-        AsyncStream { [displayLink, metronome] continuation in
-            Task {
-                for await _ in displayLink.ticks {
-                    continuation.yield(metronome.currentProgressWithinBar)
-                }
-                continuation.finish()
-            }
-        }
+    var currentProgressWithinBar: AnyPublisher<ProgressWithinBar, Never> {
+        displayLink.ticks
+            .map { [metronome] _ in metronome.currentProgressWithinBar }
+            .eraseToAnyPublisher()
     }
 
-    init(metronome: MetronomeType, displayLink: DisplayLinkStreamType) {
+    init(metronome: MetronomeType, displayLink: DisplayLinkTickerType) {
         self.metronome = metronome
         self.displayLink = displayLink
     }
@@ -50,4 +47,3 @@ class MetronomeUseCase: MetronomeUseCaseType {
         }
     }
 }
-
