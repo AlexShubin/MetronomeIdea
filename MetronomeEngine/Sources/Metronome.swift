@@ -86,7 +86,6 @@ public class Metronome: MetronomeType, @unchecked Sendable {
         let format = audioFileMainClick.processingFormat
         let beatLength = AVAudioFrameCount(format.sampleRate * 60 / bpm)
         let channelCount = Int(format.channelCount)
-        print(channelCount)
 
         let accentedClickSamples = readSamples(from: audioFileAccentedClick, format: format, beatLength: beatLength)
         let mainClickSamples = readSamples(from: audioFileMainClick, format: format, beatLength: beatLength)
