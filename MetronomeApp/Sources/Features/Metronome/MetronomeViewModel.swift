@@ -6,6 +6,7 @@
 //  Copyright © 2023 Alex Shubin. All rights reserved.
 //
 
+import Combine
 import Foundation
 import Observation
 
@@ -39,7 +40,7 @@ class MetronomeViewModel {
     var destination: MetronomeDestination?
 
     @ObservationIgnored private let useCase: MetronomeUseCaseType
-    @ObservationIgnored private var progressTask: Task<Void, Never>?
+    @ObservationIgnored private var progressCancellable: AnyCancellable?
 
     init(useCase: MetronomeUseCaseType) {
         self.useCase = useCase
@@ -55,8 +56,7 @@ class MetronomeViewModel {
             startObserving()
         case .stop:
             useCase.stop()
-            progressTask?.cancel()
-            progressTask = nil
+            progressCancellable = nil
             highlightedBeats = .initial
         case .settingsTapped:
             destination = .settings
@@ -64,9 +64,9 @@ class MetronomeViewModel {
     }
 
     private func startObserving() {
-        progressTask?.cancel()
-        progressTask = Task { [weak self, useCase] in
-            for await progress in useCase.currentProgress {
+        progressCancellable = useCase.currentProgress
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] progress in
                 self?.highlightedBeats = [
                     .init(id: 0, highlighted: progress.value > 0),
                     .init(id: 1, highlighted: progress.value > 0.25),
@@ -74,7 +74,6 @@ class MetronomeViewModel {
                     .init(id: 3, highlighted: progress.value > 0.75),
                 ]
             }
-        }
     }
 }
 
