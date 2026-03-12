@@ -4,7 +4,9 @@ let project = Project(
     name: "MetronomeEngine",
     settings: .settings(
         base: [
-            "SWIFT_VERSION": "6.0"
+            "SWIFT_VERSION": "6.0",
+            "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+            "SWIFT_EMIT_LOC_STRINGS": "YES",
         ],
         configurations: [
             .debug(name: "Debug"),

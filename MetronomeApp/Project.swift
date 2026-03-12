@@ -5,6 +5,8 @@ let project = Project(
     settings: .settings(
         base: [
             "SWIFT_VERSION": "6.0",
+            "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+            "SWIFT_EMIT_LOC_STRINGS": "YES",
             "CODE_SIGN_STYLE": "Manual",
             "CODE_SIGN_IDENTITY": "Apple Development",
             "DEVELOPMENT_TEAM": "",
