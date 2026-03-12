@@ -6,6 +6,7 @@
 //  Copyright © 2026 Alex Shubin. All rights reserved.
 //
 
+import Combine
 import MetronomeEngine
 
 struct ProgressWithinBar {
@@ -17,7 +18,7 @@ protocol MetronomeUseCaseType {
     func stop()
     func changeTempo(to bpm: Double)
 
-    var currentProgress: any AsyncSequence<ProgressWithinBar, Never> { get }
+    var currentProgress: AnyPublisher<ProgressWithinBar, Never> { get }
 }
 
 class MetronomeUseCase: MetronomeUseCaseType {
@@ -29,10 +30,12 @@ class MetronomeUseCase: MetronomeUseCaseType {
         self.displayLink = displayLink
     }
 
-    var currentProgress: any AsyncSequence<ProgressWithinBar, Never> {
-        displayLink.ticks.map { [metronome] in
-            ProgressWithinBar(value: metronome.currentProgressWithinBar)
-        }
+    var currentProgress: AnyPublisher<ProgressWithinBar, Never> {
+        displayLink.ticks
+            .map { [metronome] _ in
+                ProgressWithinBar(value: metronome.currentProgressWithinBar)
+            }
+            .eraseToAnyPublisher()
     }
 
     func play(bpm: Double) {

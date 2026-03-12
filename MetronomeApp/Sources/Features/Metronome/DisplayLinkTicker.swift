@@ -6,22 +6,21 @@
 //  Copyright © 2026 Alex Shubin. All rights reserved.
 //
 
+import Combine
 import QuartzCore.CADisplayLink
 
 protocol DisplayLinkTickerType: AnyObject {
-    var ticks: AsyncStream<Void> { get }
+    var ticks: AnyPublisher<Void, Never> { get }
     func pause()
     func resume()
 }
 
 class DisplayLinkTicker: DisplayLinkTickerType {
     private var displayLink: CADisplayLink!
-    private var continuation: AsyncStream<Void>.Continuation?
+    private let subject = PassthroughSubject<Void, Never>()
 
-    var ticks: AsyncStream<Void> {
-        let (stream, continuation) = AsyncStream.makeStream(of: Void.self)
-        self.continuation = continuation
-        return stream
+    var ticks: AnyPublisher<Void, Never> {
+        subject.eraseToAnyPublisher()
     }
 
     init() {
@@ -39,6 +38,6 @@ class DisplayLinkTicker: DisplayLinkTickerType {
     }
 
     @objc private func tick() {
-        continuation?.yield()
+        subject.send()
     }
 }
