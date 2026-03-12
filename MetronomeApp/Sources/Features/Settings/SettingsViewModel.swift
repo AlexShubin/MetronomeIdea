@@ -8,6 +8,6 @@
 
 import Foundation
 
-@Observable
+@MainActor @Observable 
 class SettingsViewModel {
 }

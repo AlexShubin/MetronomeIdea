@@ -5,7 +5,6 @@ let project = Project(
     settings: .settings(
         base: [
             "SWIFT_VERSION": "6.0",
-            "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
             "CODE_SIGN_STYLE": "Manual",
             "CODE_SIGN_IDENTITY": "Apple Development",
             "DEVELOPMENT_TEAM": "",

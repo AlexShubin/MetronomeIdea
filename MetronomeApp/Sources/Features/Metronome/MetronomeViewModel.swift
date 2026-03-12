@@ -31,7 +31,7 @@ enum MetronomeDestination: Identifiable, Equatable {
     }
 }
 
-@Observable
+@MainActor @Observable
 class MetronomeViewModel {
     private(set) var tempo = 120
     private(set) var highlightedBeats: [Beat] = .initial
