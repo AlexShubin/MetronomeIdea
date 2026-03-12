@@ -83,41 +83,35 @@ public class Metronome: MetronomeType, @unchecked Sendable {
         audioFileMainClick.framePosition = 0
         audioFileAccentedClick.framePosition = 0
         
-        let beatLength = AVAudioFrameCount(audioFileMainClick.processingFormat.sampleRate * 60 / bpm)
-        let bufferMainClick = AVAudioPCMBuffer(pcmFormat: audioFileMainClick.processingFormat,
-                                               frameCapacity: beatLength)!
-        try! audioFileMainClick.read(into: bufferMainClick)
-        bufferMainClick.frameLength = beatLength
-        
-        let bufferAccentedClick = AVAudioPCMBuffer(pcmFormat: audioFileMainClick.processingFormat,
-                                                   frameCapacity: beatLength)!
-        try! audioFileAccentedClick.read(into: bufferAccentedClick)
-        bufferAccentedClick.frameLength = beatLength
-        
-        let bufferBar = AVAudioPCMBuffer(pcmFormat: audioFileMainClick.processingFormat,
-                                         frameCapacity: 4 * beatLength)!
-        bufferBar.frameLength = 4 * beatLength
-        
-        // don't forget if we have two or more channels then we have to multiply memory pointee at channels count
-        let channelCount = Int(audioFileMainClick.processingFormat.channelCount)
-        let accentedClickArray = Array(
-            UnsafeBufferPointer(start: bufferAccentedClick.floatChannelData![0],
-                                count: channelCount * Int(beatLength))
-        )
-        let mainClickArray = Array(
-            UnsafeBufferPointer(start: bufferMainClick.floatChannelData![0],
-                                count: channelCount * Int(beatLength))
-        )
-        
-        var barArray = [Float]()
-        // one time for first beat
-        barArray.append(contentsOf: accentedClickArray)
-        // three times for regular clicks
+        let format = audioFileMainClick.processingFormat
+        let beatLength = AVAudioFrameCount(format.sampleRate * 60 / bpm)
+        let channelCount = Int(format.channelCount)
+        print(channelCount)
+
+        let accentedClickSamples = readSamples(from: audioFileAccentedClick, format: format, beatLength: beatLength)
+        let mainClickSamples = readSamples(from: audioFileMainClick, format: format, beatLength: beatLength)
+
+        var barSamples = accentedClickSamples
         for _ in 1...3 {
-            barArray.append(contentsOf: mainClickArray)
+            barSamples.append(contentsOf: mainClickSamples)
         }
-        bufferBar.floatChannelData!.pointee.update(from: barArray,
+
+        let bufferBar = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 4 * beatLength)!
+        bufferBar.frameLength = 4 * beatLength
+        bufferBar.floatChannelData!.pointee.update(from: barSamples,
                                                    count: channelCount * Int(bufferBar.frameLength))
         return bufferBar
+    }
+
+    private func readSamples(
+        from file: AVAudioFile,
+        format: AVAudioFormat,
+        beatLength: AVAudioFrameCount
+    ) -> [Float] {
+        let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: beatLength)!
+        try! file.read(into: buffer)
+        buffer.frameLength = beatLength
+        let sampleCount = Int(format.channelCount) * Int(beatLength)
+        return Array(UnsafeBufferPointer(start: buffer.floatChannelData![0], count: sampleCount))
     }
 }
