@@ -4,8 +4,7 @@ let project = Project(
     name: "MetronomeEngine",
     settings: .settings(
         base: [
-            "SWIFT_VERSION": "6.0",
-            "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
+            "SWIFT_VERSION": "6.0"
         ],
         configurations: [
             .debug(name: "Debug"),

@@ -17,7 +17,7 @@ protocol MetronomeUseCaseType {
     func stop()
     func changeTempo(to bpm: Double)
 
-    var currentProgress: AsyncStream<ProgressWithinBar> { get }
+    var currentProgress: any AsyncSequence<ProgressWithinBar, Never> { get }
 }
 
 class MetronomeUseCase: MetronomeUseCaseType {
@@ -29,15 +29,9 @@ class MetronomeUseCase: MetronomeUseCaseType {
         self.displayLink = displayLink
     }
 
-    var currentProgress: AsyncStream<ProgressWithinBar> {
-        return AsyncStream { continuation in
-            let task = Task {
-                for await _ in displayLink.ticks {
-                    continuation.yield(ProgressWithinBar(value: metronome.currentProgressWithinBar))
-                }
-                continuation.finish()
-            }
-            continuation.onTermination = { _ in task.cancel() }
+    var currentProgress: any AsyncSequence<ProgressWithinBar, Never> {
+        displayLink.ticks.map { [metronome] in
+            ProgressWithinBar(value: metronome.currentProgressWithinBar)
         }
     }
 

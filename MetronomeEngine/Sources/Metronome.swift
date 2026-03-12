@@ -8,7 +8,7 @@
 
 import AVFoundation
 
-public protocol MetronomeType {
+public protocol MetronomeType: Sendable {
     func play(bpm: Double)
     func stop()
 
@@ -16,7 +16,7 @@ public protocol MetronomeType {
     var currentProgressWithinBar: Double { get }
 }
 
-public class Metronome: MetronomeType {
+public class Metronome: MetronomeType, @unchecked Sendable {
     private let audioPlayerNode: AVAudioPlayerNode
     private let audioFileMainClick: AVAudioFile
     private let audioFileAccentedClick: AVAudioFile
