@@ -7,6 +7,7 @@
 //
 
 import QuartzCore.CADisplayLink
+import Synchronization
 
 protocol DisplayLinkTickerType {
     var ticks: AsyncStream<Void> { get }
@@ -16,17 +17,19 @@ protocol DisplayLinkTickerType {
 
 class DisplayLinkTicker: DisplayLinkTickerType {
     private var displayLink: CADisplayLink!
-    private var continuation: AsyncStream<Void>.Continuation?
+    // Mutex protects continuation which is written from the actor (via ticks)
+    // and read from the main thread (via CADisplayLink callback).
+    private let continuation = Mutex<AsyncStream<Void>.Continuation?>(nil)
 
     var ticks: AsyncStream<Void> {
         let (stream, continuation) = AsyncStream.makeStream(of: Void.self)
-        self.continuation = continuation
+        self.continuation.withLock { $0 = continuation }
         return stream
     }
 
     init() {
         displayLink = CADisplayLink(target: self, selector: #selector(tick))
-        displayLink.add(to: .current, forMode: .default)
+        displayLink.add(to: .main, forMode: .default)
         displayLink.isPaused = true
     }
 
@@ -39,6 +42,6 @@ class DisplayLinkTicker: DisplayLinkTickerType {
     }
 
     @objc private func tick() {
-        continuation?.yield()
+        _ = continuation.withLock { $0?.yield() }
     }
 }
