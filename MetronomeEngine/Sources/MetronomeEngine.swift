@@ -1,5 +1,5 @@
 //
-//  Metronome.swift
+//  MetronomeEngine.swift
 //  MetronomeEngine
 //
 //  Created by Alex Shubin on 26.03.17.
