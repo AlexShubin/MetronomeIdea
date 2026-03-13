@@ -27,12 +27,6 @@ actor Metronome: MetronomeType {
     init(metronomeEngine: MetronomeEngineType, displayLink: DisplayLinkTickerType) {
         self.metronomeEngine = metronomeEngine
         self.displayLink = displayLink
-//        let (currentProgressStream, currentProgressContinuation) = AsyncStream<ProgressWithinBar>.makeStream()
-//        self.currentProgress = currentProgressStream
-//        self.currentProgressContinuation = currentProgressContinuation
-//        self.currentProgressContinuation.onTermination = { [task] _ in
-//            task?.cancel()
-//        }
     }
 
     var currentProgress: AsyncStream<ProgressWithinBar> {
@@ -47,7 +41,8 @@ actor Metronome: MetronomeType {
     }
 
     private var progressWithinBar: ProgressWithinBar {
-        ProgressWithinBar(value: metronomeEngine.sampleTime
+        guard barLength > 0 else { return ProgressWithinBar(value: 0) }
+        return ProgressWithinBar(value: metronomeEngine.sampleTime
             .truncatingRemainder(dividingBy: barLength) / barLength)
     }
 

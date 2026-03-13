@@ -74,6 +74,7 @@ class MetronomeViewModel {
         progressTask?.cancel()
         progressTask = Task { [weak self, metronome] in
             for await progress in await metronome.currentProgress {
+                guard !Task.isCancelled else { break }
                 self?.highlightedBeats = [
                     .init(id: 0, highlighted: progress.value > 0),
                     .init(id: 1, highlighted: progress.value > 0.25),
