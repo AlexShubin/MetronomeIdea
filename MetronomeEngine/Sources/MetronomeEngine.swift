@@ -8,23 +8,30 @@
 
 import AVFoundation
 
-public protocol MetronomeType: Sendable {
-    func play(bpm: Double)
+protocol MetronomeEngineType {
+    /// Starts the metronome.
+    /// - Parameter bpm: Tempo. Beats per minute.
+    /// - Returns: Returns the bar length in frames, so later on we can understand the position of the player within the bar.
+    func play(bpm: Double) -> BarLength
+
     func stop()
 
     var isPlaying: Bool { get }
-    var currentProgressWithinBar: Double { get }
+    
+    /// Accumulative time of the playhead.
+    /// Note that if it played two bars in total, it will return the accumulative time of two bars.
+    var sampleTime: Double { get }
 }
 
-public class Metronome: MetronomeType, @unchecked Sendable {
+typealias BarLength = Double
+
+class MetronomeEngine: MetronomeEngineType {
     private let audioPlayerNode: AVAudioPlayerNode
     private let audioFileMainClick: AVAudioFile
     private let audioFileAccentedClick: AVAudioFile
     private let audioEngine: AVAudioEngine
 
-    private var currentBuffer: AVAudioPCMBuffer?
-
-    public init() {
+    init() {
         let mainClickFile = Bundle.module.url(forResource: "Low", withExtension: "wav")!
         let accentedClickFile = Bundle.module.url(forResource: "High", withExtension: "wav")!
 
@@ -40,45 +47,41 @@ public class Metronome: MetronomeType, @unchecked Sendable {
         try! audioEngine.start()
     }
 
-    public func stop() {
+    func stop() {
         audioPlayerNode.stop()
     }
 
-    public var isPlaying: Bool {
+    var isPlaying: Bool {
         audioPlayerNode.isPlaying
     }
 
-    public func play(bpm: Double) {
+    func play(bpm: Double) -> BarLength {
         let buffer = generateBuffer(bpm: bpm)
-
-        currentBuffer = buffer
-
+        
         if audioPlayerNode.isPlaying {
             audioPlayerNode.stop()
         }
-
+        
         audioPlayerNode.play()
-
+        
         audioPlayerNode.scheduleBuffer(
             buffer,
             at: nil,
             options: [.interruptsAtLoop, .loops]
         )
+
+        return Double(buffer.frameLength)
     }
 
-    /// Current progress within the bar. Changes from 0 to 1.
-    public var currentProgressWithinBar: Double {
+    var sampleTime: Double {
         guard let nodeTime = audioPlayerNode.lastRenderTime,
-              let playerTime = audioPlayerNode.playerTime(forNodeTime: nodeTime),
-              let buffer = currentBuffer else {
+              let playerTime = audioPlayerNode.playerTime(forNodeTime: nodeTime) else {
             return 0
         }
 
         return Double(playerTime.sampleTime)
-            .truncatingRemainder(dividingBy: Double(buffer.frameLength))
-            / Double(buffer.frameLength)
     }
-    
+
     private func generateBuffer(bpm: Double) -> AVAudioPCMBuffer {
         audioFileMainClick.framePosition = 0
         audioFileAccentedClick.framePosition = 0

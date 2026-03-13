@@ -8,6 +8,7 @@
 
 import Foundation
 import Observation
+import MetronomeEngine
 
 enum MetronomeViewModelAction {
     case tempoChanged(tempo: Int)
@@ -38,23 +39,29 @@ class MetronomeViewModel {
 
     var destination: MetronomeDestination?
 
-    @ObservationIgnored private let useCase: MetronomeUseCaseType
+    @ObservationIgnored private let metronome: MetronomeType
     @ObservationIgnored private var progressTask: Task<Void, Never>?
 
-    init(useCase: MetronomeUseCaseType) {
-        self.useCase = useCase
+    init(metronome: MetronomeType) {
+        self.metronome = metronome
     }
 
     func accept(action: MetronomeViewModelAction) {
         switch action {
         case .tempoChanged(let tempo):
             self.tempo = tempo
-            useCase.changeTempo(to: Double(tempo))
+            Task {
+                await metronome.changeTempo(to: Double(tempo))
+            }
         case .play:
-            useCase.play(bpm: Double(tempo))
+            Task {
+                await metronome.play(bpm: Double(tempo))
+            }
             startObserving()
         case .stop:
-            useCase.stop()
+            Task {
+                await metronome.stop()
+            }
             progressTask?.cancel()
             progressTask = nil
             highlightedBeats = .initial
@@ -65,8 +72,8 @@ class MetronomeViewModel {
 
     private func startObserving() {
         progressTask?.cancel()
-        progressTask = Task { [weak self, useCase] in
-            for await progress in useCase.currentProgress {
+        progressTask = Task { [weak self, metronome] in
+            for await progress in await metronome.currentProgress {
                 self?.highlightedBeats = [
                     .init(id: 0, highlighted: progress.value > 0),
                     .init(id: 1, highlighted: progress.value > 0.25),

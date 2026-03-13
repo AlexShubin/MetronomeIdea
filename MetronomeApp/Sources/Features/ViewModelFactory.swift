@@ -9,13 +9,9 @@
 import MetronomeEngine
 import SwiftUI
 
-struct ViewModelFactory: @unchecked Sendable {
-    let metronomeShared = Metronome()
-    let displayLinkTickerShared = DisplayLinkTicker()
-
+struct ViewModelFactory {
     @MainActor func makeMetronomeViewModel() -> MetronomeViewModel {
-        MetronomeViewModel(useCase: MetronomeUseCase(metronome: metronomeShared,
-                                                     displayLink: displayLinkTickerShared))
+        MetronomeViewModel(metronome: MetronomeEngine.Dependencies.metronome)
     }
 
     @MainActor func makeSettingsViewModel() -> SettingsViewModel {

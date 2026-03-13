@@ -8,7 +8,7 @@
 
 import QuartzCore.CADisplayLink
 
-protocol DisplayLinkTickerType: AnyObject {
+protocol DisplayLinkTickerType {
     var ticks: AsyncStream<Void> { get }
     func pause()
     func resume()
