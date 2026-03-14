@@ -56,22 +56,22 @@ struct MetronomeView: View {
     }
 }
 
-#Preview {
-    @Previewable @State var viewModel: MetronomeViewModelType = {
-        @MainActor @Observable
-        class PreviewMetronomeViewModel: MetronomeViewModelType {
-            var tempo = 120
-            var highlightedBeats: [Beat] = [
-                .init(id: 0, highlighted: true),
-                .init(id: 1, highlighted: true),
-                .init(id: 2, highlighted: false),
-                .init(id: 3, highlighted: false),
-            ]
-            var destination: MetronomeDestination?
+// MARK: - Preview
 
-            func accept(action: MetronomeViewModelAction) {}
-        }
-        return PreviewMetronomeViewModel()
-    }()
-    MetronomeView(viewModel: viewModel)
+@MainActor @Observable
+private class PreviewMetronomeViewModel: MetronomeViewModelType {
+    var tempo = 120
+    var highlightedBeats: [Beat] = [
+        .init(id: 0, highlighted: true),
+        .init(id: 1, highlighted: true),
+        .init(id: 2, highlighted: false),
+        .init(id: 3, highlighted: false),
+    ]
+    var destination: MetronomeDestination?
+
+    func accept(action: MetronomeViewModelAction) {}
+}
+
+#Preview {
+    MetronomeView(viewModel: PreviewMetronomeViewModel())
 }

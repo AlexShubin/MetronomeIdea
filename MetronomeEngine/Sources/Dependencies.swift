@@ -6,7 +6,7 @@
 //  Copyright © 2026 Alex Shubin. All rights reserved.
 //
 
-public struct Dependencies {
+public struct Dependencies: Sendable {
     public static let live = Dependencies()
 
     public func makeMetronome() -> MetronomeType {

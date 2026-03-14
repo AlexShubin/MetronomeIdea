@@ -14,11 +14,11 @@ struct Dependencies {
 
     static let live = Dependencies(metronome: MetronomeEngine.Dependencies.live.makeMetronome())
 
-    @MainActor func makeMetronomeViewModel() -> MetronomeViewModel {
+    func makeMetronomeViewModel() -> MetronomeViewModelType {
         MetronomeViewModel(metronome: metronome)
     }
 
-    @MainActor func makeSettingsViewModel() -> SettingsViewModel {
+    @MainActor func makeSettingsViewModel() -> SettingsViewModelType {
         SettingsViewModel()
     }
 }

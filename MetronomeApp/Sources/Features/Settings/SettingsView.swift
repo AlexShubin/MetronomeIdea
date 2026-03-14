@@ -16,11 +16,11 @@ struct SettingsView: View {
     }
 }
 
+// MARK: - Preview
+
+@MainActor @Observable
+private class PreviewSettingsViewModel: SettingsViewModelType {}
+
 #Preview {
-    @Previewable @State var viewModel: SettingsViewModelType = {
-        @MainActor @Observable
-        class PreviewSettingsViewModel: SettingsViewModelType {}
-        return PreviewSettingsViewModel()
-    }()
-    SettingsView(viewModel: viewModel)
+    SettingsView(viewModel: PreviewSettingsViewModel())
 }
