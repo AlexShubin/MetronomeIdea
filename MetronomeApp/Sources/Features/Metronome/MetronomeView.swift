@@ -9,8 +9,8 @@
 import SwiftUI
 
 struct MetronomeView: View {
-    @State var viewModel: MetronomeViewModel
-    @Environment(\.viewModelFactory) private var viewModelFactory
+    @State var viewModel: MetronomeViewModelType
+    @Environment(\.dependencies) private var dependencies
 
     var body: some View {
         VStack(spacing: 12) {
@@ -40,7 +40,7 @@ struct MetronomeView: View {
         .sheet(item: $viewModel.destination) { destination in
             switch destination {
             case .settings:
-                SettingsView(viewModel: viewModelFactory.makeSettingsViewModel())
+                SettingsView(viewModel: dependencies.makeSettingsViewModel())
             }
         }
     }
@@ -57,7 +57,21 @@ struct MetronomeView: View {
 }
 
 #Preview {
-    @Previewable @Environment(\.viewModelFactory) var viewModelFactory
+    @Previewable @State var viewModel: MetronomeViewModelType = {
+        @MainActor @Observable
+        class PreviewMetronomeViewModel: MetronomeViewModelType {
+            var tempo = 120
+            var highlightedBeats: [Beat] = [
+                .init(id: 0, highlighted: true),
+                .init(id: 1, highlighted: true),
+                .init(id: 2, highlighted: false),
+                .init(id: 3, highlighted: false),
+            ]
+            var destination: MetronomeDestination?
 
-    MetronomeView(viewModel: viewModelFactory.makeMetronomeViewModel())
+            func accept(action: MetronomeViewModelAction) {}
+        }
+        return PreviewMetronomeViewModel()
+    }()
+    MetronomeView(viewModel: viewModel)
 }

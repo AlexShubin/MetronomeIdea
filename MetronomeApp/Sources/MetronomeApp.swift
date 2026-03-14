@@ -10,11 +10,11 @@ import SwiftUI
 
 @main
 struct MetronomeApp: App {
-    @Environment(\.viewModelFactory) private var viewModelFactory
+    @Environment(\.dependencies) private var dependencies
 
     var body: some Scene {
         WindowGroup {
-            MetronomeView(viewModel: viewModelFactory.makeMetronomeViewModel())
+            MetronomeView(viewModel: dependencies.makeMetronomeViewModel())
         }
     }
 }

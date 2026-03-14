@@ -32,8 +32,16 @@ enum MetronomeDestination: Identifiable, Equatable {
     }
 }
 
+@MainActor
+protocol MetronomeViewModelType: Observable {
+    var tempo: Int { get }
+    var highlightedBeats: [Beat] { get }
+    var destination: MetronomeDestination? { get set }
+    func accept(action: MetronomeViewModelAction)
+}
+
 @MainActor @Observable
-class MetronomeViewModel {
+class MetronomeViewModel: MetronomeViewModelType {
     private(set) var tempo = 120
     private(set) var highlightedBeats: [Beat] = .initial
 
