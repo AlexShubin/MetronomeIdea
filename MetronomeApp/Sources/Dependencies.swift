@@ -14,7 +14,7 @@ struct Dependencies {
 
     static let live = Dependencies(metronome: MetronomeEngine.Dependencies.live.makeMetronome())
 
-    func makeMetronomeViewModel() -> MetronomeViewModelType {
+    @MainActor func makeMetronomeViewModel() -> MetronomeViewModelType {
         MetronomeViewModel(metronome: metronome)
     }
 
