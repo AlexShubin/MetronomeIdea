@@ -1,5 +1,5 @@
 //
-//  MetronomeUseCase.swift
+//  Metronome.swift
 //  MetronomeEngine
 //
 //  Created by Alex Shubin on 09.03.26.
