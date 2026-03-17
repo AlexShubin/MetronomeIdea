@@ -1,6 +1,6 @@
 //
 //  MetronomeView.swift
-//  MetronomeIdea
+//  MetronomeApp
 //
 //  Created by Alex Shubin on 07.02.23.
 //  Copyright © 2023 Alex Shubin. All rights reserved.
@@ -9,7 +9,8 @@
 import SwiftUI
 
 struct MetronomeView: View {
-    @State var viewModel: MetronomeViewModel
+    @State var viewModel: MetronomeViewModelType
+    @Environment(\.dependencies) private var dependencies
 
     var body: some View {
         VStack(spacing: 12) {
@@ -31,8 +32,17 @@ struct MetronomeView: View {
             Button("Stop") {
                 viewModel.accept(action: .stop)
             }
+            Button("Settings") {
+                viewModel.accept(action: .settingsTapped)
+            }
         }
         .padding()
+        .sheet(item: $viewModel.destination) { destination in
+            switch destination {
+            case .settings:
+                SettingsView(viewModel: dependencies.makeSettingsViewModel())
+            }
+        }
     }
 
     @ViewBuilder
@@ -46,8 +56,22 @@ struct MetronomeView: View {
     }
 }
 
+// MARK: - Preview
+
+@MainActor @Observable
+private class PreviewMetronomeViewModel: MetronomeViewModelType {
+    var tempo = 120
+    var highlightedBeats: [Beat] = [
+        .init(id: 0, highlighted: true),
+        .init(id: 1, highlighted: true),
+        .init(id: 2, highlighted: false),
+        .init(id: 3, highlighted: false),
+    ]
+    var destination: MetronomeDestination?
+
+    func accept(action: MetronomeViewModelAction) {}
+}
+
 #Preview {
-    MetronomeView(
-        viewModel: MetronomeViewModel(metronome: Metronome.sharedInstance)
-    )
+    MetronomeView(viewModel: PreviewMetronomeViewModel())
 }
