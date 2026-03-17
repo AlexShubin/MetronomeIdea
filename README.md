@@ -1,10 +1,12 @@
 # Metronome App
 
-💡 An app demonstrating how an accurate metronome can be built on iOS using Swift and `AVAudioEngine`.
+💡 An app demonstrating how an accurate metronome can be built using Swift and `AVAudioEngine`.
 
 📝 This one is based on the sample rate — not on some sort of a timer.
 
-🚀 Feel free to use it to build more complex apps.
+ℹ️ A small idea that is growing into a more serious app, that I might even use in my own guitar practice. Let's see if I will have time and persistence to finish it. 🎸
+
+🚀 Feel free to use any code here to build more complex apps. If you're only interested in the metronome engine. Check out this file: [MetronomeEngine.swift](MetronomeEngine/Sources/MetronomeEngine.swift)
 
 ## Getting Started
 
