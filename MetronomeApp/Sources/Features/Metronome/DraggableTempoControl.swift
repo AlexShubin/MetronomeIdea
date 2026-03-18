@@ -14,7 +14,7 @@ struct DraggableTempoControl: View {
 
     @State private var dragStartTempo: Int?
 
-    private let pointsPerStep: CGFloat = 4
+    private let pointsPerStep: CGFloat = 8
 
     var body: some View {
         HStack(spacing: 4) {
@@ -41,8 +41,12 @@ struct DraggableTempoControl: View {
                     }
                     let delta = Int(-value.translation.height / pointsPerStep)
                     let newTempo = (dragStartTempo ?? tempo) + delta
-                    withAnimation(.snappy(duration: 0.15)) {
-                        tempo = min(max(newTempo, range.lowerBound), range.upperBound)
+
+                    let newFinalTempo = min(max(newTempo, range.lowerBound), range.upperBound)
+                    if newFinalTempo != tempo {
+                        withAnimation(.snappy(duration: 0.15)) {
+                            tempo = newFinalTempo
+                        }
                     }
                 }
                 .onEnded { _ in
