@@ -13,34 +13,42 @@ struct MetronomeView: View {
     @Environment(\.dependencies) private var dependencies
 
     var body: some View {
-        VStack(spacing: 12) {
-            HStack {
-                ForEach(viewModel.highlightedBeats) {
-                    circle(highlighted: $0.highlighted)
+        NavigationStack {
+            VStack(spacing: 12) {
+                HStack {
+                    ForEach(viewModel.highlightedBeats) {
+                        circle(highlighted: $0.highlighted)
+                    }
+                }
+                .frame(height: 20)
+
+                Stepper("Tempo: \(viewModel.tempo)",
+                        value: .init(get: { viewModel.tempo },
+                                     set: { viewModel.accept(action: .tempoChanged(tempo: $0)) }),
+                        in: 40...240)
+                .frame(maxWidth: 240)
+                Button("Start") {
+                    viewModel.accept(action: .play)
+                }
+                Button("Stop") {
+                    viewModel.accept(action: .stop)
                 }
             }
-            .frame(height: 20)
-
-            Stepper("Tempo: \(viewModel.tempo)",
-                    value: .init(get: { viewModel.tempo },
-                                 set: { viewModel.accept(action: .tempoChanged(tempo: $0)) }),
-                    in: 10...300)
-            .frame(maxWidth: 240)
-            Button("Start") {
-                viewModel.accept(action: .play)
+            .padding()
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.accept(action: .settingsTapped)
+                    } label: {
+                        Image(systemName: "gear")
+                    }
+                }
             }
-            Button("Stop") {
-                viewModel.accept(action: .stop)
-            }
-            Button("Settings") {
-                viewModel.accept(action: .settingsTapped)
-            }
-        }
-        .padding()
-        .sheet(item: $viewModel.destination) { destination in
-            switch destination {
-            case .settings:
-                SettingsView(viewModel: dependencies.makeSettingsViewModel())
+            .sheet(item: $viewModel.destination) { destination in
+                switch destination {
+                case .settings:
+                    SettingsView(viewModel: dependencies.makeSettingsViewModel())
+                }
             }
         }
     }
