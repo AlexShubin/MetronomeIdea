@@ -22,11 +22,12 @@ struct MetronomeView: View {
                 }
                 .frame(height: 20)
 
-                Stepper("Tempo: \(viewModel.tempo)",
-                        value: .init(get: { viewModel.tempo },
-                                     set: { viewModel.accept(action: .tempoChanged(tempo: $0)) }),
-                        in: 40...240)
-                .frame(maxWidth: 240)
+                DraggableTempoControl(
+                    tempo: .init(
+                        get: { viewModel.tempo },
+                        set: { viewModel.accept(action: .tempoChanged(tempo: $0)) }
+                    )
+                )
                 Button("Start") {
                     viewModel.accept(action: .play)
                 }
