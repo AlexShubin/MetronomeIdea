@@ -26,7 +26,8 @@ struct MetronomeView: View {
                     tempo: .init(
                         get: { viewModel.tempo },
                         set: { viewModel.accept(action: .tempoChanged(tempo: $0)) }
-                    )
+                    ),
+                    range: 40...240
                 )
                 Button("Start") {
                     viewModel.accept(action: .play)

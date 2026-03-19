@@ -10,7 +10,7 @@ import SwiftUI
 
 struct DraggableTempoControl: View {
     @Binding var tempo: Int
-    var range: ClosedRange<Int> = 40...240
+    let range: ClosedRange<Int>
 
     @State private var dragStartTempo: Int?
 
@@ -58,5 +58,5 @@ struct DraggableTempoControl: View {
 
 #Preview {
     @Previewable @State var tempo = 120
-    DraggableTempoControl(tempo: $tempo)
+    DraggableTempoControl(tempo: $tempo, range: 40...240)
 }
