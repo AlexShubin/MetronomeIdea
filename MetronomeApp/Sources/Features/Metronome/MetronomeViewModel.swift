@@ -84,10 +84,10 @@ class MetronomeViewModel: MetronomeViewModelType {
             for await progress in await metronome.currentProgress {
                 guard !Task.isCancelled else { break }
                 self?.highlightedBeats = [
-                    .init(id: 0, highlighted: progress.value > 0),
-                    .init(id: 1, highlighted: progress.value > 0.25),
-                    .init(id: 2, highlighted: progress.value > 0.5),
-                    .init(id: 3, highlighted: progress.value > 0.75),
+                    .init(id: 0, highlighted: (0...0.25).contains(progress.value)),
+                    .init(id: 1, highlighted: (0.25...0.5).contains(progress.value)),
+                    .init(id: 2, highlighted: (0.5...0.75).contains(progress.value)),
+                    .init(id: 3, highlighted: (0.75...1).contains(progress.value)),
                 ]
             }
         }

@@ -14,7 +14,7 @@ struct DraggableTempoControl: View {
 
     @State private var dragStartTempo: Int?
 
-    private let pointsPerStep: CGFloat = 8
+    private let pointsPerStep: CGFloat = 20
 
     var body: some View {
         HStack(spacing: 4) {

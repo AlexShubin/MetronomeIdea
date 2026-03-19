@@ -14,13 +14,13 @@ struct MetronomeView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 12) {
-                HStack {
+            VStack(alignment: .center, spacing: 12) {
+                HStack(spacing: 40) {
                     ForEach(viewModel.highlightedBeats) {
                         circle(highlighted: $0.highlighted)
                     }
                 }
-                .frame(height: 20)
+                .frame(height: 80)
 
                 DraggableTempoControl(
                     tempo: .init(
@@ -56,12 +56,16 @@ struct MetronomeView: View {
 
     @ViewBuilder
     private func circle(highlighted: Bool) -> some View {
-        let size: CGFloat = highlighted ? 15 : 10
+        let size: CGFloat = highlighted ? 35 : 25
 
-        Circle()
-            .fill(highlighted ? .red : .blue)
-            .frame(width: size, height: size)
-            .animation(.linear(duration: 0.1), value: viewModel.highlightedBeats)
+        ZStack {
+            Color.clear
+                .frame(width: 40, height: 40)
+            Circle()
+                .fill(highlighted ? .red : .blue)
+                .frame(width: size, height: size)
+                .animation(.linear(duration: 0.1), value: viewModel.highlightedBeats)
+        }
     }
 }
 
