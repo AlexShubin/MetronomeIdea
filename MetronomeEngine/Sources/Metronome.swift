@@ -25,7 +25,7 @@ actor Metronome: MetronomeType {
     private let displayLink: DisplayLinkTickerType
 
     let metronomeStateStream: AsyncStream<MetronomeState>
-    let metronomeStateContinuation: AsyncStream<MetronomeState>.Continuation
+    private let metronomeStateContinuation: AsyncStream<MetronomeState>.Continuation
 
     private var barLength: Double = 0
 
@@ -45,8 +45,8 @@ actor Metronome: MetronomeType {
 
         (metronomeStateStream, metronomeStateContinuation) = AsyncStream<MetronomeState>.makeStream()
 
-        let task = Task {
-            await startObservingTicker()
+        let task = Task { [weak self] in
+            await self?.startObservingTicker()
         }
 
         metronomeStateContinuation.onTermination = { _ in
@@ -54,9 +54,14 @@ actor Metronome: MetronomeType {
         }
     }
 
+    isolated deinit {
+        metronomeStateContinuation.finish()
+    }
+
     private func startObservingTicker() async {
+        metronomeStateContinuation.yield(metronomeState)
         for await _ in displayLink.ticks {
-            guard barLength > 0 else { return }
+            guard barLength > 0 else { continue }
             metronomeState.progressWithinBar = metronomeEngine.sampleTime
                 .truncatingRemainder(dividingBy: barLength) / barLength
         }
