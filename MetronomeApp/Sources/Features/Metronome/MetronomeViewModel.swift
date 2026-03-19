@@ -48,49 +48,44 @@ class MetronomeViewModel: MetronomeViewModelType {
     var destination: MetronomeDestination?
 
     @ObservationIgnored private let metronome: MetronomeType
-    @ObservationIgnored private var progressTask: Task<Void, Never>?
+    @ObservationIgnored private var observationTask: Task<Void, Never>?
 
     init(metronome: MetronomeType) {
         self.metronome = metronome
+        observationTask = Task { [weak self, metronome] in
+            for await state in await metronome.metronomeStateStream {
+                guard !Task.isCancelled else { break }
+                self?.tempo = Int(state.tempo)
+                self?.highlightedBeats = Self.beats(from: state)
+            }
+        }
+    }
+
+    deinit {
+        observationTask?.cancel()
     }
 
     func accept(action: MetronomeViewModelAction) {
         switch action {
         case .tempoChanged(let tempo):
-            self.tempo = tempo
-            Task {
-                await metronome.changeTempo(to: Double(tempo))
-            }
+            Task { await metronome.changeTempo(to: Double(tempo)) }
         case .play:
-            Task {
-                await metronome.play(bpm: Double(tempo))
-            }
-            startObserving()
+            Task { await metronome.play() }
         case .stop:
-            Task {
-                await metronome.stop()
-            }
-            progressTask?.cancel()
-            progressTask = nil
-            highlightedBeats = .initial
+            Task { await metronome.stop() }
         case .settingsTapped:
             destination = .settings
         }
     }
 
-    private func startObserving() {
-        progressTask?.cancel()
-        progressTask = Task { [weak self, metronome] in
-            for await progress in await metronome.currentProgress {
-                guard !Task.isCancelled else { break }
-                self?.highlightedBeats = [
-                    .init(id: 0, highlighted: (0...0.25).contains(progress.value)),
-                    .init(id: 1, highlighted: (0.25...0.5).contains(progress.value)),
-                    .init(id: 2, highlighted: (0.5...0.75).contains(progress.value)),
-                    .init(id: 3, highlighted: (0.75...1).contains(progress.value)),
-                ]
-            }
-        }
+    private static func beats(from state: MetronomeState) -> [Beat] {
+        guard state.isPlaying else { return .initial }
+        return [
+            .init(id: 0, highlighted: (0...0.25).contains(state.progressWithinBar)),
+            .init(id: 1, highlighted: (0.25...0.5).contains(state.progressWithinBar)),
+            .init(id: 2, highlighted: (0.5...0.75).contains(state.progressWithinBar)),
+            .init(id: 3, highlighted: (0.75...1).contains(state.progressWithinBar)),
+        ]
     }
 }
 
