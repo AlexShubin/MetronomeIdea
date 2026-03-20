@@ -22,18 +22,17 @@ struct MetronomeView: View {
                 }
                 .frame(height: 80)
 
-                DraggableTempoControl(
-                    tempo: .init(
-                        get: { viewModel.state.tempo },
-                        set: { viewModel.accept(action: .tempoChanged(tempo: $0)) }
-                    ),
-                    range: 40...240
-                )
-                Button("Start") {
-                    viewModel.accept(action: .play)
-                }
-                Button("Stop") {
-                    viewModel.accept(action: .stop)
+                HStack(spacing: 12) {
+                    DraggableTempoControl(
+                        tempo: .init(
+                            get: { viewModel.state.tempo },
+                            set: { viewModel.accept(action: .tempoChanged(tempo: $0)) }
+                        ),
+                        range: 40...240
+                    )
+                    PlayButton(state: viewModel.state.playButtonState) {
+                        viewModel.accept(action: .playStopTapped)
+                    }
                 }
             }
             .padding()
@@ -80,6 +79,7 @@ struct MetronomeViewState: Equatable {
 
     var tempo: Int
     var beats: [Beat]
+    var playButtonState: PlayButtonViewState
 
     static let initial = MetronomeViewState(
         tempo: 120,
@@ -88,7 +88,8 @@ struct MetronomeViewState: Equatable {
             .init(id: 1, highlighted: false),
             .init(id: 2, highlighted: false),
             .init(id: 3, highlighted: false),
-        ]
+        ],
+        playButtonState: .play
     )
 }
 
@@ -103,7 +104,8 @@ private class PreviewMetronomeViewModel: MetronomeViewModelType {
             .init(id: 1, highlighted: false),
             .init(id: 2, highlighted: false),
             .init(id: 3, highlighted: false),
-        ]
+        ],
+        playButtonState: .play
     )
     var destination: MetronomeDestination?
 

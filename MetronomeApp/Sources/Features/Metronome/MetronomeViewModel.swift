@@ -12,8 +12,7 @@ import MetronomeEngine
 
 enum MetronomeViewModelAction {
     case tempoChanged(tempo: Int)
-    case play
-    case stop
+    case playStopTapped
     case settingsTapped
 }
 
@@ -61,10 +60,11 @@ class MetronomeViewModel: MetronomeViewModelType {
         switch action {
         case .tempoChanged(let tempo):
             Task { await metronome.changeTempo(to: Double(tempo)) }
-        case .play:
-            Task { await metronome.play() }
-        case .stop:
-            Task { await metronome.stop() }
+        case .playStopTapped:
+            switch state.playButtonState {
+            case .stop: Task { await metronome.stop() }
+            case .play: Task { await metronome.play() }
+            }
         case .settingsTapped:
             destination = .settings
         }
@@ -74,6 +74,7 @@ class MetronomeViewModel: MetronomeViewModelType {
 private extension MetronomeViewState {
     init(_ metronomeState: MetronomeState) {
         tempo = Int(metronomeState.tempo)
+        playButtonState = metronomeState.isPlaying ? .stop : .play
         beats = if metronomeState.isPlaying {
             [
                 .init(id: 0, highlighted: (0...0.25).contains(metronomeState.progressWithinBar)),
