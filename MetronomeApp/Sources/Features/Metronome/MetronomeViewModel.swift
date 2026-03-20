@@ -12,14 +12,8 @@ import MetronomeEngine
 
 enum MetronomeViewModelAction {
     case tempoChanged(tempo: Int)
-    case play
-    case stop
+    case playStopTapped
     case settingsTapped
-}
-
-struct Beat: Identifiable, Equatable {
-    let id: Int
-    let highlighted: Bool
 }
 
 enum MetronomeDestination: Identifiable, Equatable {
@@ -34,71 +28,62 @@ enum MetronomeDestination: Identifiable, Equatable {
 
 @MainActor
 protocol MetronomeViewModelType: Observable {
-    var tempo: Int { get }
-    var highlightedBeats: [Beat] { get }
+    var state: MetronomeViewState { get }
     var destination: MetronomeDestination? { get set }
     func accept(action: MetronomeViewModelAction)
 }
 
 @MainActor @Observable
 class MetronomeViewModel: MetronomeViewModelType {
-    private(set) var tempo = 120
-    private(set) var highlightedBeats: [Beat] = .initial
+    private(set) var state: MetronomeViewState = .initial
 
     var destination: MetronomeDestination?
 
     @ObservationIgnored private let metronome: MetronomeType
-    @ObservationIgnored private var progressTask: Task<Void, Never>?
+    @ObservationIgnored private var observationTask: Task<Void, Never>?
 
     init(metronome: MetronomeType) {
         self.metronome = metronome
+        observationTask = Task { [weak self, metronome] in
+            for await metronomeState in await metronome.metronomeStateStream {
+                guard !Task.isCancelled else { break }
+                self?.state = MetronomeViewState(metronomeState)
+            }
+        }
+    }
+
+    deinit {
+        observationTask?.cancel()
     }
 
     func accept(action: MetronomeViewModelAction) {
         switch action {
         case .tempoChanged(let tempo):
-            self.tempo = tempo
-            Task {
-                await metronome.changeTempo(to: Double(tempo))
+            Task { await metronome.changeTempo(to: Double(tempo)) }
+        case .playStopTapped:
+            switch state.playButtonState {
+            case .stop: Task { await metronome.stop() }
+            case .play: Task { await metronome.play() }
             }
-        case .play:
-            Task {
-                await metronome.play(bpm: Double(tempo))
-            }
-            startObserving()
-        case .stop:
-            Task {
-                await metronome.stop()
-            }
-            progressTask?.cancel()
-            progressTask = nil
-            highlightedBeats = .initial
         case .settingsTapped:
             destination = .settings
         }
     }
-
-    private func startObserving() {
-        progressTask?.cancel()
-        progressTask = Task { [weak self, metronome] in
-            for await progress in await metronome.currentProgress {
-                guard !Task.isCancelled else { break }
-                self?.highlightedBeats = [
-                    .init(id: 0, highlighted: progress.value > 0),
-                    .init(id: 1, highlighted: progress.value > 0.25),
-                    .init(id: 2, highlighted: progress.value > 0.5),
-                    .init(id: 3, highlighted: progress.value > 0.75),
-                ]
-            }
-        }
-    }
 }
 
-private extension Array where Element == Beat {
-    static let initial: Self = [
-        .init(id: 0, highlighted: false),
-        .init(id: 1, highlighted: false),
-        .init(id: 2, highlighted: false),
-        .init(id: 3, highlighted: false),
-    ]
+private extension MetronomeViewState {
+    init(_ metronomeState: MetronomeState) {
+        tempo = Int(metronomeState.tempo)
+        playButtonState = metronomeState.isPlaying ? .stop : .play
+        beats = if metronomeState.isPlaying {
+            [
+                .init(id: 0, highlighted: (0...0.25).contains(metronomeState.progressWithinBar)),
+                .init(id: 1, highlighted: (0.25...0.5).contains(metronomeState.progressWithinBar)),
+                .init(id: 2, highlighted: (0.5...0.75).contains(metronomeState.progressWithinBar)),
+                .init(id: 3, highlighted: (0.75...1).contains(metronomeState.progressWithinBar)),
+            ]
+        } else {
+            MetronomeViewState.initial.beats
+        }
+    }
 }
