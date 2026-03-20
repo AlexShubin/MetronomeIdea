@@ -16,8 +16,6 @@ protocol MetronomeEngineType {
 
     func stop()
 
-    var isPlaying: Bool { get }
-    
     /// Accumulative time of the playhead.
     /// Note that if it played two bars in total, it will return the accumulative time of two bars.
     var sampleTime: Double { get }
@@ -49,10 +47,6 @@ class MetronomeEngine: MetronomeEngineType {
 
     func stop() {
         audioPlayerNode.stop()
-    }
-
-    var isPlaying: Bool {
-        audioPlayerNode.isPlaying
     }
 
     func play(bpm: Double) -> BarLength {
