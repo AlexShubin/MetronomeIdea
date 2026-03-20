@@ -17,11 +17,6 @@ enum MetronomeViewModelAction {
     case settingsTapped
 }
 
-struct Beat: Identifiable, Equatable {
-    let id: Int
-    let highlighted: Bool
-}
-
 enum MetronomeDestination: Identifiable, Equatable {
     case settings
 
@@ -34,16 +29,14 @@ enum MetronomeDestination: Identifiable, Equatable {
 
 @MainActor
 protocol MetronomeViewModelType: Observable {
-    var tempo: Int { get }
-    var highlightedBeats: [Beat] { get }
+    var state: MetronomeViewState { get }
     var destination: MetronomeDestination? { get set }
     func accept(action: MetronomeViewModelAction)
 }
 
 @MainActor @Observable
 class MetronomeViewModel: MetronomeViewModelType {
-    private(set) var tempo = 120
-    private(set) var highlightedBeats: [Beat] = .initial
+    private(set) var state: MetronomeViewState = .initial
 
     var destination: MetronomeDestination?
 
@@ -53,10 +46,9 @@ class MetronomeViewModel: MetronomeViewModelType {
     init(metronome: MetronomeType) {
         self.metronome = metronome
         observationTask = Task { [weak self, metronome] in
-            for await state in await metronome.metronomeStateStream {
+            for await metronomeState in await metronome.metronomeStateStream {
                 guard !Task.isCancelled else { break }
-                self?.tempo = Int(state.tempo)
-                self?.highlightedBeats = Self.beats(from: state)
+                self?.state = MetronomeViewState(metronomeState)
             }
         }
     }
@@ -77,23 +69,20 @@ class MetronomeViewModel: MetronomeViewModelType {
             destination = .settings
         }
     }
-
-    private static func beats(from state: MetronomeState) -> [Beat] {
-        guard state.isPlaying else { return .initial }
-        return [
-            .init(id: 0, highlighted: (0...0.25).contains(state.progressWithinBar)),
-            .init(id: 1, highlighted: (0.25...0.5).contains(state.progressWithinBar)),
-            .init(id: 2, highlighted: (0.5...0.75).contains(state.progressWithinBar)),
-            .init(id: 3, highlighted: (0.75...1).contains(state.progressWithinBar)),
-        ]
-    }
 }
 
-private extension Array where Element == Beat {
-    static let initial: Self = [
-        .init(id: 0, highlighted: false),
-        .init(id: 1, highlighted: false),
-        .init(id: 2, highlighted: false),
-        .init(id: 3, highlighted: false),
-    ]
+private extension MetronomeViewState {
+    init(_ metronomeState: MetronomeState) {
+        tempo = Int(metronomeState.tempo)
+        beats = if metronomeState.isPlaying {
+            [
+                .init(id: 0, highlighted: (0...0.25).contains(metronomeState.progressWithinBar)),
+                .init(id: 1, highlighted: (0.25...0.5).contains(metronomeState.progressWithinBar)),
+                .init(id: 2, highlighted: (0.5...0.75).contains(metronomeState.progressWithinBar)),
+                .init(id: 3, highlighted: (0.75...1).contains(metronomeState.progressWithinBar)),
+            ]
+        } else {
+            MetronomeViewState.initial.beats
+        }
+    }
 }

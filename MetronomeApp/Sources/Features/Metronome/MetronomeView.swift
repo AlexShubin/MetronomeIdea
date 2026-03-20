@@ -16,7 +16,7 @@ struct MetronomeView: View {
         NavigationStack {
             VStack(alignment: .center, spacing: 12) {
                 HStack(spacing: 40) {
-                    ForEach(viewModel.highlightedBeats) {
+                    ForEach(viewModel.state.beats) {
                         circle(highlighted: $0.highlighted)
                     }
                 }
@@ -24,7 +24,7 @@ struct MetronomeView: View {
 
                 DraggableTempoControl(
                     tempo: .init(
-                        get: { viewModel.tempo },
+                        get: { viewModel.state.tempo },
                         set: { viewModel.accept(action: .tempoChanged(tempo: $0)) }
                     ),
                     range: 40...240
@@ -65,22 +65,46 @@ struct MetronomeView: View {
             Circle()
                 .fill(highlighted ? .red : .blue)
                 .frame(width: size, height: size)
-                .animation(.linear(duration: 0.1), value: viewModel.highlightedBeats)
+                .animation(.linear(duration: 0.1), value: viewModel.state.beats)
         }
     }
+}
+
+// MARK: - View State
+
+struct MetronomeViewState: Equatable {
+    struct Beat: Identifiable, Equatable {
+        let id: Int
+        let highlighted: Bool
+    }
+
+    var tempo: Int
+    var beats: [Beat]
+
+    static let initial = MetronomeViewState(
+        tempo: 120,
+        beats: [
+            .init(id: 0, highlighted: false),
+            .init(id: 1, highlighted: false),
+            .init(id: 2, highlighted: false),
+            .init(id: 3, highlighted: false),
+        ]
+    )
 }
 
 // MARK: - Preview
 
 @MainActor @Observable
 private class PreviewMetronomeViewModel: MetronomeViewModelType {
-    var tempo = 120
-    var highlightedBeats: [Beat] = [
-        .init(id: 0, highlighted: true),
-        .init(id: 1, highlighted: true),
-        .init(id: 2, highlighted: false),
-        .init(id: 3, highlighted: false),
-    ]
+    var state = MetronomeViewState(
+        tempo: 120,
+        beats: [
+            .init(id: 0, highlighted: true),
+            .init(id: 1, highlighted: false),
+            .init(id: 2, highlighted: false),
+            .init(id: 3, highlighted: false),
+        ]
+    )
     var destination: MetronomeDestination?
 
     func accept(action: MetronomeViewModelAction) {}
