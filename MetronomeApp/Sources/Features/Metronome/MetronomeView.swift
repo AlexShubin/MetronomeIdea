@@ -22,7 +22,7 @@ struct MetronomeView: View {
                 }
                 .frame(height: 80)
 
-                HStack(spacing: 12) {
+                HStack(spacing: 24) {
                     DraggableTempoControl(
                         tempo: .init(
                             get: { viewModel.state.tempo },
