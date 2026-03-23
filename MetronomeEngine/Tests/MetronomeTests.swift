@@ -15,7 +15,10 @@ struct MetronomeTests {
     let mockDisplayLink = MockDisplayLinkTicker()
 
     func makeSUT() -> Metronome {
-        Metronome(metronomeEngine: mockEngine, displayLink: mockDisplayLink)
+        Metronome(
+            metronomeEngine: mockEngine,
+            displayLink: mockDisplayLink
+        )
     }
 
     @Test func initialState() async {
@@ -33,21 +36,30 @@ struct MetronomeTests {
 
         let state = await sut.metronomeState
         #expect(state.isPlaying == true)
-        #expect(mockEngine.playCallCount == 1)
-        #expect(mockEngine.lastPlayedBPM == 120)
-        #expect(mockDisplayLink.resumeCallCount == 1)
+        #expect(mockEngine.calls == [
+            .play(bpm: 120)
+        ])
+        #expect(mockDisplayLink.calls == [
+            .resume
+        ])
     }
 
     @Test func stop_setsIsNotPlayingAndStopsEngine() async {
         let sut = makeSUT()
-        await sut.play()
 
+        await sut.play()
         await sut.stop()
 
         let state = await sut.metronomeState
+
         #expect(state.isPlaying == false)
-        #expect(mockEngine.stopCallCount == 1)
-        #expect(mockDisplayLink.pauseCallCount == 1)
+
+        #expect(mockEngine.calls == [
+            .play(bpm: 120), .stop
+        ])
+        #expect(mockDisplayLink.calls == [
+            .resume, .pause
+        ])
     }
 
     @Test func changeTempo_updatesTempoInState() async {
@@ -65,8 +77,9 @@ struct MetronomeTests {
 
         await sut.changeTempo(to: 180)
 
-        #expect(mockEngine.playCallCount == 2)
-        #expect(mockEngine.lastPlayedBPM == 180)
+        #expect(mockEngine.calls == [
+            .play(bpm: 120), .play(bpm: 180)
+        ])
     }
 
     @Test func changeTempo_whileStopped_doesNotRestartEngine() async {
@@ -74,7 +87,7 @@ struct MetronomeTests {
 
         await sut.changeTempo(to: 180)
 
-        #expect(mockEngine.playCallCount == 0)
+        #expect(mockEngine.calls == [])
     }
 
     @Test func stateStream_emitsInitialState() async {
@@ -118,32 +131,37 @@ struct MetronomeTests {
 // MARK: - Mocks
 
 final class MockMetronomeEngine: MetronomeEngineType, @unchecked Sendable {
+
+    enum Call: Equatable {
+        case play(bpm: Double)
+        case stop
+    }
     // Safety: only mutated from the Metronome actor's isolation in tests.
-    var playCallCount = 0
-    var stopCallCount = 0
-    var lastPlayedBPM: Double?
+    var calls = [Call]()
     var stubbedBarLength: Double = 100
     var stubbedSampleTime: Double = 0
 
     func play(bpm: Double) -> BarLength {
-        playCallCount += 1
-        lastPlayedBPM = bpm
+        calls.append(.play(bpm: bpm))
         return stubbedBarLength
     }
 
     func stop() {
-        stopCallCount += 1
+        calls.append(.stop)
     }
 
     var sampleTime: Double {
-        stubbedSampleTime
+        return stubbedSampleTime
     }
 }
 
 final class MockDisplayLinkTicker: DisplayLinkTickerType, @unchecked Sendable {
-    // Safety: continuation protected by being set once before ticks are consumed.
-    var pauseCallCount = 0
-    var resumeCallCount = 0
+    enum Call: Equatable {
+        case pause
+        case resume
+    }
+    // Safety: only mutated from the Metronome actor's isolation in tests.
+    var calls = [Call]()
 
     private var continuation: AsyncStream<Void>.Continuation?
     private let _ticks: AsyncStream<Void>
@@ -157,11 +175,11 @@ final class MockDisplayLinkTicker: DisplayLinkTickerType, @unchecked Sendable {
     var ticks: AsyncStream<Void> { _ticks }
 
     func pause() {
-        pauseCallCount += 1
+        calls.append(.pause)
     }
 
     func resume() {
-        resumeCallCount += 1
+        calls.append(.resume)
     }
 
     func sendTick() {
