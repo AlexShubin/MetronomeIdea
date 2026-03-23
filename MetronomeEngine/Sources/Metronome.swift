@@ -29,7 +29,7 @@ actor Metronome: MetronomeType {
 
     private var barLength: Double = 0
 
-    var metronomeState = MetronomeState(
+    private var metronomeState = MetronomeState(
         tempo: 120,
         isPlaying: false,
         progressWithinBar: 0

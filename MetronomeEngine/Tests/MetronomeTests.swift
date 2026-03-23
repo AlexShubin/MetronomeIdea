@@ -11,31 +11,36 @@ import Testing
 
 @Suite
 struct MetronomeTests {
-    let mockEngine = MockMetronomeEngine()
-    let mockDisplayLink = MockDisplayLinkTicker()
+    let mockEngine: MockMetronomeEngine
+    let mockDisplayLink: MockDisplayLinkTicker
 
-    func makeSUT() -> Metronome {
-        Metronome(
-            metronomeEngine: mockEngine,
-            displayLink: mockDisplayLink
-        )
+    let sut: MetronomeType
+
+    init() {
+        mockEngine = .init()
+        mockDisplayLink = .init()
+
+        sut = Metronome(metronomeEngine: mockEngine,
+                        displayLink: mockDisplayLink)
     }
 
     @Test func initialState() async {
-        let sut = makeSUT()
-        let state = await sut.metronomeState
-        #expect(state.tempo == 120)
-        #expect(state.isPlaying == false)
-        #expect(state.progressWithinBar == 0)
+        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
+        let state = await iterator.next()
+
+        #expect(state?.tempo == 120)
+        #expect(state?.isPlaying == false)
+        #expect(state?.progressWithinBar == 0)
     }
 
     @Test func play_setsIsPlayingAndStartsEngine() async {
-        let sut = makeSUT()
+        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
+        _ = await iterator.next() // consume initial
 
         await sut.play()
+        let state = await iterator.next()
 
-        let state = await sut.metronomeState
-        #expect(state.isPlaying == true)
+        #expect(state?.isPlaying == true)
         #expect(mockEngine.calls == [
             .play(bpm: 120)
         ])
@@ -45,15 +50,16 @@ struct MetronomeTests {
     }
 
     @Test func stop_setsIsNotPlayingAndStopsEngine() async {
-        let sut = makeSUT()
+        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
+        _ = await iterator.next() // consume initial
 
         await sut.play()
+        _ = await iterator.next()
+
         await sut.stop()
+        let state = await iterator.next()
 
-        let state = await sut.metronomeState
-
-        #expect(state.isPlaying == false)
-
+        #expect(state?.isPlaying == false)
         #expect(mockEngine.calls == [
             .play(bpm: 120), .stop
         ])
@@ -63,16 +69,16 @@ struct MetronomeTests {
     }
 
     @Test func changeTempo_updatesTempoInState() async {
-        let sut = makeSUT()
+        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
+        _ = await iterator.next() // consume initial
 
         await sut.changeTempo(to: 180)
+        let state = await iterator.next()
 
-        let state = await sut.metronomeState
-        #expect(state.tempo == 180)
+        #expect(state?.tempo == 180)
     }
 
     @Test func changeTempo_whilePlaying_restartsEngine() async {
-        let sut = makeSUT()
         await sut.play()
 
         await sut.changeTempo(to: 180)
@@ -83,15 +89,12 @@ struct MetronomeTests {
     }
 
     @Test func changeTempo_whileStopped_doesNotRestartEngine() async {
-        let sut = makeSUT()
-
         await sut.changeTempo(to: 180)
 
         #expect(mockEngine.calls == [])
     }
 
     @Test func stateStream_emitsInitialState() async {
-        let sut = makeSUT()
         var iterator = await sut.metronomeStateStream.makeAsyncIterator()
 
         let first = await iterator.next()
@@ -101,7 +104,6 @@ struct MetronomeTests {
     }
 
     @Test func stateStream_emitsOnPlay() async {
-        let sut = makeSUT()
         var iterator = await sut.metronomeStateStream.makeAsyncIterator()
         _ = await iterator.next() // consume initial
 
@@ -114,12 +116,12 @@ struct MetronomeTests {
     @Test func progressUpdates_onTick() async {
         mockEngine.stubbedSampleTime = 50
         mockEngine.stubbedBarLength = 100
-        let sut = makeSUT()
+
         var iterator = await sut.metronomeStateStream.makeAsyncIterator()
         _ = await iterator.next() // consume initial
 
         await sut.play()
-        _ = await iterator.next() // consume isPlaying = true
+        _ = await iterator.next()
 
         mockDisplayLink.sendTick()
         let state = await iterator.next()
