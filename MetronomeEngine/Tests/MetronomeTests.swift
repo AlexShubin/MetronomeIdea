@@ -83,10 +83,10 @@ struct MetronomeTests {
     }
 
     @Test func stateStream_emitsInitialState() async {
-        let first = await sut.metronomeStateStream.next()
+        let state = await sut.metronomeStateStream.next()
 
-        #expect(first?.tempo == 120)
-        #expect(first?.isPlaying == false)
+        #expect(state?.tempo == 120)
+        #expect(state?.isPlaying == false)
     }
 
     @Test func stateStream_emitsOnPlay() async {

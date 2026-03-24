@@ -82,7 +82,8 @@ actor Metronome: MetronomeType {
     func changeTempo(to bpm: Double) {
         metronomeState.tempo = bpm
         if metronomeState.isPlaying {
-            play()
+            barLength = metronomeEngine.play(bpm: metronomeState.tempo)
+            displayLink.resume()
         }
     }
 }
