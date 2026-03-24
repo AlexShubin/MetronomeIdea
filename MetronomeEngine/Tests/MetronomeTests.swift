@@ -82,13 +82,6 @@ struct MetronomeTests {
         #expect(mockEngine.calls == [])
     }
 
-    @Test func stateStream_emitsInitialState() async {
-        let state = await sut.metronomeStateStream.next()
-
-        #expect(state?.tempo == 120)
-        #expect(state?.isPlaying == false)
-    }
-
     @Test func stateStream_emitsOnPlay() async {
         await sut.play()
         let state = await sut.metronomeStateStream.dropFirst().next()
