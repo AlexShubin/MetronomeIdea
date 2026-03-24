@@ -25,8 +25,7 @@ struct MetronomeTests {
     }
 
     @Test func initialState() async {
-        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
-        let state = await iterator.next()
+        let state = await sut.metronomeStateStream.next()
 
         #expect(state?.tempo == 120)
         #expect(state?.isPlaying == false)
@@ -34,11 +33,8 @@ struct MetronomeTests {
     }
 
     @Test func play_setsIsPlayingAndStartsEngine() async {
-        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
-        _ = await iterator.next() // consume initial
-
         await sut.play()
-        let state = await iterator.next()
+        let state = await sut.metronomeStateStream.dropFirst().next()
 
         #expect(state?.isPlaying == true)
         #expect(mockEngine.calls == [
@@ -50,14 +46,9 @@ struct MetronomeTests {
     }
 
     @Test func stop_setsIsNotPlayingAndStopsEngine() async {
-        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
-        _ = await iterator.next() // consume initial
-
         await sut.play()
-        _ = await iterator.next()
-
         await sut.stop()
-        let state = await iterator.next()
+        let state = await sut.metronomeStateStream.dropFirst(2).next()
 
         #expect(state?.isPlaying == false)
         #expect(mockEngine.calls == [
@@ -69,11 +60,8 @@ struct MetronomeTests {
     }
 
     @Test func changeTempo_updatesTempoInState() async {
-        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
-        _ = await iterator.next() // consume initial
-
         await sut.changeTempo(to: 180)
-        let state = await iterator.next()
+        let state = await sut.metronomeStateStream.dropFirst().next()
 
         #expect(state?.tempo == 180)
     }
@@ -95,20 +83,15 @@ struct MetronomeTests {
     }
 
     @Test func stateStream_emitsInitialState() async {
-        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
-
-        let first = await iterator.next()
+        let first = await sut.metronomeStateStream.next()
 
         #expect(first?.tempo == 120)
         #expect(first?.isPlaying == false)
     }
 
     @Test func stateStream_emitsOnPlay() async {
-        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
-        _ = await iterator.next() // consume initial
-
         await sut.play()
-        let state = await iterator.next()
+        let state = await sut.metronomeStateStream.dropFirst().next()
 
         #expect(state?.isPlaying == true)
     }
@@ -117,14 +100,9 @@ struct MetronomeTests {
         mockEngine.stubbedSampleTime = 50
         mockEngine.stubbedBarLength = 100
 
-        var iterator = await sut.metronomeStateStream.makeAsyncIterator()
-        _ = await iterator.next() // consume initial
-
         await sut.play()
-        _ = await iterator.next()
-
         mockDisplayLink.sendTick()
-        let state = await iterator.next()
+        let state = await sut.metronomeStateStream.dropFirst(2).next()
 
         #expect(state?.progressWithinBar == 0.5)
     }
