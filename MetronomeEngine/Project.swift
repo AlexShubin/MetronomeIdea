@@ -23,5 +23,16 @@ let project = Project(
             sources: ["Sources/**"],
             resources: ["Resources/**"]
         ),
+        .target(
+            name: "MetronomeEngineTests",
+            destinations: .iOS,
+            product: .unitTests,
+            bundleId: "com.alexshubin.MetronomeEngineTests",
+            deploymentTargets: .iOS("26.0"),
+            sources: ["Tests/**"],
+            dependencies: [
+                .target(name: "MetronomeEngine"),
+            ]
+        ),
     ]
 )

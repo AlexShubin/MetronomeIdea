@@ -29,7 +29,7 @@ actor Metronome: MetronomeType {
 
     private var barLength: Double = 0
 
-    var metronomeState = MetronomeState(
+    private var metronomeState = MetronomeState(
         tempo: 120,
         isPlaying: false,
         progressWithinBar: 0
@@ -82,7 +82,8 @@ actor Metronome: MetronomeType {
     func changeTempo(to bpm: Double) {
         metronomeState.tempo = bpm
         if metronomeState.isPlaying {
-            play()
+            barLength = metronomeEngine.play(bpm: metronomeState.tempo)
+            displayLink.resume()
         }
     }
 }
