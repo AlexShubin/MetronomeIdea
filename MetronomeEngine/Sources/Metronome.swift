@@ -18,6 +18,12 @@ public struct MetronomeState: Sendable {
     public var tempo: Double
     public var isPlaying: Bool
     public var progressWithinBar: Double
+
+    public init(tempo: Double, isPlaying: Bool, progressWithinBar: Double) {
+        self.tempo = tempo
+        self.isPlaying = isPlaying
+        self.progressWithinBar = progressWithinBar
+    }
 }
 
 actor Metronome: MetronomeType {
