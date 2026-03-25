@@ -20,4 +20,5 @@
 
 ## Testing
 
-- Never use `Task.sleep` in tests. Design production code to be testable without timing dependencies — e.g., expose synchronous methods like `applyState` or use `async` APIs that tests can `await` directly.
+- Never use `Task.sleep` in tests. Design production code to be testable without timing dependencies — use `async` APIs that tests can `await` directly, or `withCheckedContinuation` + `withObservationTracking` for stream-based state propagation.
+- Always declare the SUT using the protocol type (e.g., `let sut: any MetronomeViewModelType`), not the concrete type. Tests should exercise the object through its public interface only.
