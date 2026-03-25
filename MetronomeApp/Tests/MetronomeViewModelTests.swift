@@ -9,7 +9,7 @@
 import Testing
 import Observation
 import MetronomeEngine
-import MetronomeTestSupport
+import MetronomeEngineTestSupport
 @testable import MetronomeApp
 
 @Suite @MainActor

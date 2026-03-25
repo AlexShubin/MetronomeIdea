@@ -19,6 +19,10 @@
   ```
 - Avoid using `any` with protocol types when it's not required. Prefer `let sut: MetronomeViewModelType` over `let sut: any MetronomeViewModelType`.
 
+## Project Structure
+
+- Each Tuist project follows the naming convention: `Feature`, `FeatureTests`, `FeatureTestSupport` (when needed). For example: `MetronomeEngine`, `MetronomeEngineTests`, `MetronomeEngineTestSupport`.
+
 ## Testing
 
 - Never use `Task.sleep` in tests. Design production code to be testable without timing dependencies — use `async` APIs that tests can `await` directly, or `withCheckedContinuation` + `withObservationTracking` for stream-based state propagation.

@@ -42,7 +42,7 @@ let project = Project(
             dependencies: [
                 .target(name: "MetronomeApp"),
                 .project(target: "MetronomeEngine", path: "../MetronomeEngine"),
-                .project(target: "MetronomeTestSupport", path: "../MetronomeEngine"),
+                .project(target: "MetronomeEngineTestSupport", path: "../MetronomeEngine"),
             ]
         ),
     ]
