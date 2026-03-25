@@ -3,6 +3,7 @@
 ## Tuist
 
 - To regenerate the Xcode project, run: `mise run generate`
+- Always run `mise run generate` after structural changes to the project (adding/removing targets, files, dependencies in Project.swift)
 
 ## Code Style
 
