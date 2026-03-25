@@ -30,7 +30,7 @@ enum MetronomeDestination: Identifiable, Equatable {
 protocol MetronomeViewModelType: Observable {
     var state: MetronomeViewState { get }
     var destination: MetronomeDestination? { get set }
-    func accept(action: MetronomeViewModelAction)
+    func accept(action: MetronomeViewModelAction) async
 }
 
 @MainActor @Observable
@@ -47,23 +47,27 @@ class MetronomeViewModel: MetronomeViewModelType {
         observationTask = Task { [weak self, metronome] in
             for await metronomeState in await metronome.metronomeStateStream {
                 guard !Task.isCancelled else { break }
-                self?.state = MetronomeViewState(metronomeState)
+                self?.applyState(metronomeState)
             }
         }
+    }
+
+    func applyState(_ metronomeState: MetronomeState) {
+        state = MetronomeViewState(metronomeState)
     }
 
     deinit {
         observationTask?.cancel()
     }
 
-    func accept(action: MetronomeViewModelAction) {
+    func accept(action: MetronomeViewModelAction) async {
         switch action {
         case .tempoChanged(let tempo):
-            Task { await metronome.changeTempo(to: Double(tempo)) }
+            await metronome.changeTempo(to: Double(tempo))
         case .playStopTapped:
             switch state.playButtonState {
-            case .stop: Task { await metronome.stop() }
-            case .play: Task { await metronome.play() }
+            case .stop: await metronome.stop()
+            case .play: await metronome.play()
             }
         case .settingsTapped:
             destination = .settings

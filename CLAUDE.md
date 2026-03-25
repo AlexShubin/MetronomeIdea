@@ -17,3 +17,7 @@
   //  Copyright © YYYY Alex Shubin. All rights reserved.
   //
   ```
+
+## Testing
+
+- Never use `Task.sleep` in tests. Design production code to be testable without timing dependencies — e.g., expose synchronous methods like `applyState` or use `async` APIs that tests can `await` directly.
