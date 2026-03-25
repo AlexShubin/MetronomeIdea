@@ -37,7 +37,7 @@ public actor MockMetronome: MetronomeType {
         calls.append(.changeTempo(bpm: bpm))
     }
 
-    public func sendState(_ state: MetronomeState) {
+    public nonisolated func sendState(_ state: MetronomeState) {
         metronomeStateContinuation.yield(state)
     }
 }

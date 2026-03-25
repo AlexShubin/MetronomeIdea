@@ -52,7 +52,7 @@ class MetronomeViewModel: MetronomeViewModelType {
         }
     }
 
-    func applyState(_ metronomeState: MetronomeState) {
+    private func applyState(_ metronomeState: MetronomeState) {
         state = MetronomeViewState(metronomeState)
     }
 

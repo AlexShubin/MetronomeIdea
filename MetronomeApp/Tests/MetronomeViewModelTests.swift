@@ -7,6 +7,7 @@
 //
 
 import Testing
+import Observation
 import MetronomeEngine
 import MetronomeTestSupport
 @testable import MetronomeApp
@@ -14,19 +15,34 @@ import MetronomeTestSupport
 @Suite @MainActor
 struct MetronomeViewModelTests {
     let mockMetronome: MockMetronome
-    let sut: MetronomeViewModel
+    let sut: any MetronomeViewModelType
 
     init() {
         mockMetronome = .init()
         sut = MetronomeViewModel(metronome: mockMetronome)
     }
 
+    // MARK: - Helpers
+
+    private func sendState(_ state: MetronomeState) async {
+        await withCheckedContinuation { continuation in
+            withObservationTracking {
+                _ = sut.state
+            } onChange: {
+                continuation.resume()
+            }
+            mockMetronome.sendState(state)
+        }
+    }
+
+    // MARK: - Tests
+
     @Test func initialState() {
         #expect(sut.state == .initial)
     }
 
-    @Test func stateUpdates_onMetronomeStateChange() {
-        sut.applyState(
+    @Test func stateUpdates_onMetronomeStateChange() async {
+        await sendState(
             MetronomeState(tempo: 140, isPlaying: true, progressWithinBar: 0.3)
         )
 
@@ -46,7 +62,7 @@ struct MetronomeViewModelTests {
     }
 
     @Test func playStopTapped_whenPlaying_callsStop() async {
-        sut.applyState(
+        await sendState(
             MetronomeState(tempo: 120, isPlaying: true, progressWithinBar: 0)
         )
 
@@ -69,8 +85,8 @@ struct MetronomeViewModelTests {
         #expect(sut.destination == .settings)
     }
 
-    @Test func beatHighlighting_firstQuarter() {
-        sut.applyState(
+    @Test func beatHighlighting_firstQuarter() async {
+        await sendState(
             MetronomeState(tempo: 120, isPlaying: true, progressWithinBar: 0.1)
         )
 
@@ -78,16 +94,19 @@ struct MetronomeViewModelTests {
         #expect(sut.state.beats[1].highlighted == false)
     }
 
-    @Test func beatHighlighting_thirdQuarter() {
-        sut.applyState(
+    @Test func beatHighlighting_thirdQuarter() async {
+        await sendState(
             MetronomeState(tempo: 120, isPlaying: true, progressWithinBar: 0.6)
         )
 
         #expect(sut.state.beats[2].highlighted == true)
     }
 
-    @Test func beats_whenNotPlaying_allUnhighlighted() {
-        sut.applyState(
+    @Test func beats_whenNotPlaying_allUnhighlighted() async {
+        await sendState(
+            MetronomeState(tempo: 120, isPlaying: true, progressWithinBar: 0)
+        )
+        await sendState(
             MetronomeState(tempo: 120, isPlaying: false, progressWithinBar: 0.5)
         )
 
