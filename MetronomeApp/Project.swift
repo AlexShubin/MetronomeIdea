@@ -32,5 +32,18 @@ let project = Project(
                 .project(target: "MetronomeEngine", path: "../MetronomeEngine"),
             ]
         ),
+        .target(
+            name: "MetronomeAppTests",
+            destinations: .iOS,
+            product: .unitTests,
+            bundleId: "com.alexshubin.MetronomeAppTests",
+            deploymentTargets: .iOS("26.0"),
+            sources: ["Tests/**"],
+            dependencies: [
+                .target(name: "MetronomeApp"),
+                .project(target: "MetronomeEngine", path: "../MetronomeEngine"),
+                .project(target: "MetronomeTestSupport", path: "../MetronomeEngine"),
+            ]
+        ),
     ]
 )

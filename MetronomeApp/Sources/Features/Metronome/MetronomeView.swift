@@ -26,12 +26,12 @@ struct MetronomeView: View {
                     DraggableTempoControl(
                         tempo: .init(
                             get: { viewModel.state.tempo },
-                            set: { viewModel.accept(action: .tempoChanged(tempo: $0)) }
+                            set: { newTempo in Task { await viewModel.accept(action: .tempoChanged(tempo: newTempo)) } }
                         ),
                         range: 40...240
                     )
                     PlayButton(state: viewModel.state.playButtonState) {
-                        viewModel.accept(action: .playStopTapped)
+                        Task { await viewModel.accept(action: .playStopTapped) }
                     }
                 }
             }
@@ -39,7 +39,7 @@ struct MetronomeView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        viewModel.accept(action: .settingsTapped)
+                        Task { await viewModel.accept(action: .settingsTapped) }
                     } label: {
                         Image(systemName: "gear")
                     }
@@ -109,7 +109,7 @@ private class PreviewMetronomeViewModel: MetronomeViewModelType {
     )
     var destination: MetronomeDestination?
 
-    func accept(action: MetronomeViewModelAction) {}
+    func accept(action: MetronomeViewModelAction) async {}
 }
 
 #Preview {

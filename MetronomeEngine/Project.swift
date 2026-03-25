@@ -24,6 +24,17 @@ let project = Project(
             resources: ["Resources/**"]
         ),
         .target(
+            name: "MetronomeTestSupport",
+            destinations: .iOS,
+            product: .framework,
+            bundleId: "com.alexshubin.MetronomeTestSupport",
+            deploymentTargets: .iOS("26.0"),
+            sources: ["TestSupport/**"],
+            dependencies: [
+                .target(name: "MetronomeEngine"),
+            ]
+        ),
+        .target(
             name: "MetronomeEngineTests",
             destinations: .iOS,
             product: .unitTests,
