@@ -15,7 +15,7 @@ import MetronomeEngineTestSupport
 @Suite @MainActor
 struct MetronomeViewModelTests {
     let mockMetronome: MockMetronome
-    let sut: any MetronomeViewModelType
+    let sut: MetronomeViewModelType
 
     init() {
         mockMetronome = .init()

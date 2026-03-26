@@ -12,7 +12,7 @@ struct SettingsView: View {
     @State var viewModel: SettingsViewModelType
 
     var body: some View {
-        Text("Settings")
+        Text("🚧 Work in progress 🚧")
     }
 }
 
